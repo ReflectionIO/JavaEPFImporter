@@ -234,7 +234,7 @@ class MySqlIngester extends IngesterBase implements Ingester {
 			conn = connection;
 		}
 
-		executeQuery(conn, String.format(exStr, this.dbName, tableName), 2);
+		conn = executeQuery(conn, String.format(exStr, this.dbName, tableName), 2);
 
 		boolean doesExist = false;
 
@@ -272,7 +272,7 @@ class MySqlIngester extends IngesterBase implements Ingester {
 		}
 
 		String exStr = String.format("SELECT COUNT(*) AS count FROM information_schema.COLUMNS where TABLE_NAME='%s';", tableName);
-		executeQuery(conn, exStr, 2); // cur.execute() returns the number of rows,
+		conn = executeQuery(conn, exStr, 2); // cur.execute() returns the number of rows,
 		// which for SHOW COLUMNS is the number of columns in the table
 
 		int colCount = 0;
@@ -298,7 +298,7 @@ class MySqlIngester extends IngesterBase implements Ingester {
 
 		Connection conn = this.connect();
 
-		executeQuery(conn, String.format("DROP TABLE IF EXISTS %s", tableName), 2);
+		conn = executeQuery(conn, String.format("DROP TABLE IF EXISTS %s", tableName), 2);
 		// create the column name part of the table creation string
 		String colDef;
 		List<String> lst = new ArrayList<String>();
@@ -310,7 +310,7 @@ class MySqlIngester extends IngesterBase implements Ingester {
 		String paramStr = Joiner.on(", ").join(lst);
 		// paramString now looks like "export_date BIGINT, storefront_id INT, country_code VARCHAR(100)" etc.
 		String exStr = String.format("CREATE TABLE %s (%s)", tableName, paramStr);
-		executeQuery(conn, exStr, 2); // create the table in the database
+		conn = executeQuery(conn, exStr, 2); // create the table in the database
 		// set the primary key
 		conn.disconnect();
 		applyPrimaryKeyConstraints(tableName);
@@ -330,7 +330,7 @@ class MySqlIngester extends IngesterBase implements Ingester {
 			String exStr = String.format("ALTER TABLE %s ADD CONSTRAINT PRIMARY KEY (%s)", tableName, pkStr);
 
 			Connection conn = this.connect();
-			executeQuery(conn, exStr, 2);
+			conn = executeQuery(conn, exStr, 2);
 			conn.disconnect();
 		}
 	}
@@ -396,7 +396,7 @@ class MySqlIngester extends IngesterBase implements Ingester {
 			exStr = exStr.replace("'null'", "NULL");
 
 			try {
-				executeQuery(conn, exStr, 2);
+				conn = executeQuery(conn, exStr, 2);
 			} catch (SQLException e) {
 				LOGGER.error(String.format("Error occured executing: %s", exStr), e);
 				// } catch (SQLIntegrityConstraintViolationException e) {
@@ -422,7 +422,7 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	private void dropTable(String tableName) throws NullPointerException, SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		Connection conn = this.connect();
-		executeQuery(conn, String.format("DROP TABLE IF EXISTS %s", tableName), 2);
+		conn = executeQuery(conn, String.format("DROP TABLE IF EXISTS %s", tableName), 2);
 		conn.disconnect();
 	}
 
@@ -437,22 +437,22 @@ class MySqlIngester extends IngesterBase implements Ingester {
 
 		// first, rename the existing "real" table, so we can restore it if something goes wrong
 		String targetOld = targetTable + "_old";
-		executeQuery(conn, String.format("DROP TABLE IF EXISTS %s", targetOld), 2);
+		conn = executeQuery(conn, String.format("DROP TABLE IF EXISTS %s", targetOld), 2);
 		if (this.tableExists(targetTable, conn)) {
-			executeQuery(conn, String.format("ALTER TABLE %s RENAME %s", targetTable, targetOld), 2);
+			conn = executeQuery(conn, String.format("ALTER TABLE %s RENAME %s", targetTable, targetOld), 2);
 		}
 		// now rename the new table to replace the old table
 		try {
-			executeQuery(conn, String.format("ALTER TABLE %s RENAME %s", sourceTable, targetTable), 2);
+			conn = executeQuery(conn, String.format("ALTER TABLE %s RENAME %s", sourceTable, targetTable), 2);
 		} catch (SQLException e) {
 			LOGGER.error("Could not rename tmp table; reverting to original table (if it exists).", e);
 			if (this.tableExists(targetOld, conn)) {
-				executeQuery(conn, String.format("ALTER TABLE %s RENAME %s", targetOld, targetTable), 2);
+				conn = executeQuery(conn, String.format("ALTER TABLE %s RENAME %s", targetOld, targetTable), 2);
 			}
 		}
 		// Drop sourceTable so it's not hanging around
 		// drop the old table
-		executeQuery(conn, String.format("DROP TABLE IF EXISTS %s", targetOld), 2);
+		conn = executeQuery(conn, String.format("DROP TABLE IF EXISTS %s", targetOld), 2);
 	}
 
 	/**
@@ -461,9 +461,9 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	private void createUnionTable() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		Connection conn = this.connect();
-		executeQuery(conn, String.format("DROP TABLE IF EXISTS %s", this.unionTableName), 2);
+		conn = executeQuery(conn, String.format("DROP TABLE IF EXISTS %s", this.unionTableName), 2);
 		String exStr = String.format("CREATE TABLE %s %s", this.unionTableName, incrementalUnionString());
-		executeQuery(conn, exStr, 2);
+		conn = executeQuery(conn, exStr, 2);
 		conn.disconnect();
 	}
 
@@ -507,7 +507,7 @@ class MySqlIngester extends IngesterBase implements Ingester {
 		return unionString;
 	}
 
-	private void executeQuery(final Connection connection, final String query, final int retryCount) throws SQLException, InstantiationException,
+	private Connection executeQuery(final Connection connection, final String query, final int retryCount) throws SQLException, InstantiationException,
 			IllegalAccessException, ClassNotFoundException {
 
 		Connection conn = null;
@@ -541,5 +541,7 @@ class MySqlIngester extends IngesterBase implements Ingester {
 				}
 			}
 		}
+		
+		return conn;
 	}
 }
