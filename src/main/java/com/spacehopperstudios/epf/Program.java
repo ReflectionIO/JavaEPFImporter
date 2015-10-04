@@ -1,6 +1,10 @@
-/**
- * 
- */
+//  
+//  Program.java
+//  epfimporter
+//
+//  Created by William Shakour on October 4, 2015.
+//  Copyright © 2015 WillShex Limited. All rights reserved.
+//
 package com.spacehopperstudios.epf;
 
 import java.io.File;
@@ -42,6 +46,10 @@ import com.spacehopperstudios.epf.ingest.Ingester;
 import com.spacehopperstudios.epf.ingest.IngesterProvider;
 import com.spacehopperstudios.epf.parse.V3Parser;
 
+/**
+ * @author William Shakour (billy1380)
+ *
+ */
 public class Program {
 
 	private static final String USAGE_FORMAT = "usage: %s [-fxrak] [-d db_host] [-u db_user] [-p db_password] [-n db_name]" + "\r\n"

@@ -1,3 +1,10 @@
+//  
+//  Connection.java
+//  epfimporter
+//
+//  Created by William Shakour on October 4, 2015.
+//  Copyright © 2015 WillShex Limited. All rights reserved.
+//
 package com.spacehopperstudios.database;
 
 import java.sql.DriverManager;
@@ -7,6 +14,10 @@ import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 
+/**
+ * @author William Shakour (billy1380)
+ *
+ */
 public class Connection {
 
 	private String server;
@@ -28,10 +39,14 @@ public class Connection {
 			LOGGER.trace("Create connection with server " + server + ", database: " + database + ", username: " + username + " and password: " + password);
 		}
 
-		if (server == null) throw new NullPointerException("server cannot be null");
-		if (database == null) throw new NullPointerException("database cannot be null");
-		if (username == null) throw new NullPointerException("username cannot be null");
-		if (password == null) throw new NullPointerException("password cannot be null");
+		if (server == null)
+			throw new NullPointerException("server cannot be null");
+		if (database == null)
+			throw new NullPointerException("database cannot be null");
+		if (username == null)
+			throw new NullPointerException("username cannot be null");
+		if (password == null)
+			throw new NullPointerException("password cannot be null");
 
 		this.server = server;
 		this.database = database;
@@ -60,8 +75,10 @@ public class Connection {
 			LOGGER.trace("executing query: " + query);
 		}
 
-		if (query == null) throw new NullPointerException("query cannot be null");
-		if (query.length() == 0) throw new IllegalArgumentException("query cannot be empty");
+		if (query == null)
+			throw new NullPointerException("query cannot be null");
+		if (query.length() == 0)
+			throw new IllegalArgumentException("query cannot be empty");
 
 		affectedRowCount = -1;
 		statement = null;

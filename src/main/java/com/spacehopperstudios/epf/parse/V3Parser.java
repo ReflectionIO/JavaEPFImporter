@@ -1,6 +1,10 @@
-/**
- * 
- */
+//  
+//  V3Parser.java
+//  epfimporter
+//
+//  Created by William Shakour on October 4, 2015.
+//  Copyright © 2015 WillShex Limited. All rights reserved.
+//
 package com.spacehopperstudios.epf.parse;
 
 import java.io.IOException;

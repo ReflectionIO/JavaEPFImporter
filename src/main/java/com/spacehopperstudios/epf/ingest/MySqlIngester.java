@@ -1,6 +1,10 @@
-/**
- * 
- */
+//  
+//  MySqlIngester.java
+//  epfimporter
+//
+//  Created by William Shakour on October 4, 2015.
+//  Copyright © 2015 WillShex Limited. All rights reserved.
+//
 package com.spacehopperstudios.epf.ingest;
 
 import java.io.IOException;
@@ -19,7 +23,9 @@ import com.spacehopperstudios.epf.TimeHelper;
 import com.spacehopperstudios.epf.parse.V3Parser;
 
 /**
- * Used to ingest an EPF file into a MySQL database.
+ * @author William Shakour (billy1380)
+ * 
+ *         Used to ingest an EPF file into a MySQL database.
  */
 class MySqlIngester extends IngesterBase implements Ingester {
 
@@ -42,11 +48,20 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	private String dbName;
 
 	@Override
-	public void init(String filePath, V3Parser parser, String tablePrefix/* =null */, String dbHost/* ='localhost' */, String dbUser/* ='epfimporter' */,
-			String dbPassword/*
-							 * ='epf123'
-							 */, String dbName/* ='epf' */, String recordDelim/* ='\x02\n' */, String fieldDelim/* ='\x01' */) throws IOException,
-			SubstringNotFoundException {
+	public void init(String filePath, V3Parser parser, String tablePrefix/* =null */, String dbHost/*
+																								 * =
+																								 * 'localhost'
+																								 */, String dbUser/*
+																												 * =
+																												 * 'epfimporter'
+																												 */, String dbPassword/*
+																																	 * =
+																																	 * 'epf123'
+																																	 */, String dbName/*
+																																					 * =
+																																					 * 'epf'
+																																					 */,
+			String recordDelim/* ='\x02\n' */, String fieldDelim/* ='\x01' */) throws IOException, SubstringNotFoundException {
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Init started");
@@ -72,7 +87,8 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	/**
 	 * Perform a full ingest of the file at this.filePath.
 	 * 
-	 * This is done as follows: 1. Create a new table with a temporary name 2. Populate the new table 3. Drop the old table and rename the new one
+	 * This is done as follows: 1. Create a new table with a temporary name 2.
+	 * Populate the new table 3. Drop the old table and rename the new one
 	 */
 	public void ingestFull(boolean skipKeyViolators/* =False */) {
 
@@ -108,7 +124,10 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	/**
 	 * Resume an interrupted full ingest, continuing from fromRecord.
 	 */
-	public void ingestFullResume(long fromRecord/* =0 */, boolean skipKeyViolators/* =False */) {
+	public void ingestFullResume(long fromRecord/* =0 */, boolean skipKeyViolators/*
+																				 * =
+																				 * False
+																				 */) {
 
 		if (LOGGER.isInfoEnabled()) {
 			LOGGER.info(String.format("Resuming full ingest of %s (%d records)", this.tableName, this.parser.getRecordsExpected()));
@@ -136,7 +155,10 @@ class MySqlIngester extends IngesterBase implements Ingester {
 		}
 	}
 
-	public void ingestIncremental(long fromRecord/* =0 */, boolean skipKeyViolators /* =False */) {
+	public void ingestIncremental(long fromRecord/* =0 */, boolean skipKeyViolators /*
+																					 * =
+																					 * False
+																					 */) {
 
 		try {
 			if (!this.tableExists(this.tableName, null)) {
@@ -212,14 +234,20 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	}
 
 	/**
-	 * Convenience method which returns True if tableName exists in the db, False if not.
+	 * Convenience method which returns True if tableName exists in the db,
+	 * False if not.
 	 * 
 	 * If tableName is null, uses this.tableName.
 	 * 
-	 * If a connection object is specified, this method uses it and does not close it; if not, it creates one using connect(), uses it, and then closes it.
+	 * If a connection object is specified, this method uses it and does not
+	 * close it; if not, it creates one using connect(), uses it, and then
+	 * closes it.
 	 */
-	private boolean tableExists(String tableName/* =null */, Connection connection/* =null */) throws SQLException, InstantiationException,
-			IllegalAccessException, ClassNotFoundException {
+	private boolean tableExists(String tableName/* =null */, Connection connection/*
+																				 * =
+																				 * null
+																				 */) throws SQLException, InstantiationException, IllegalAccessException,
+			ClassNotFoundException {
 
 		String exStr = "SELECT COUNT(*) AS count FROM information_schema.tables WHERE table_schema = '%s' AND table_name = '%s'";
 
@@ -254,9 +282,13 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	 * 
 	 * If tableName is null, uses this.tableName.
 	 * 
-	 * If a connection object is specified, this method uses it and does not close it; if not, it creates one using connect(), uses it, and then closes it.
+	 * If a connection object is specified, this method uses it and does not
+	 * close it; if not, it creates one using connect(), uses it, and then
+	 * closes it.
 	 */
-	private int columnCount(String tableName/* =null */, Connection connection/* =null */) throws SQLException, InstantiationException, IllegalAccessException,
+	private int columnCount(String tableName/* =null */, Connection connection/*
+																			 * =null
+																			 */) throws SQLException, InstantiationException, IllegalAccessException,
 			ClassNotFoundException {
 
 		if (tableName == null) {
@@ -289,7 +321,8 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	}
 
 	/**
-	 * Connect to the db and create a table named this.tableName_TMP, dropping previous one if it exists.
+	 * Connect to the db and create a table named this.tableName_TMP, dropping
+	 * previous one if it exists.
 	 * 
 	 * Also adds primary key constraint to the new table.
 	 */
@@ -336,13 +369,18 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	}
 
 	/**
-	 * Appropriately escape the contents of a list of records (as returned by the parser) so that there are no illegal characters (e.g. internal quotes) in the
-	 * SQL query.
+	 * Appropriately escape the contents of a list of records (as returned by
+	 * the parser) so that there are no illegal characters (e.g. internal
+	 * quotes) in the SQL query.
 	 * 
-	 * This is done here rather than in the parser because it uses the literal() method of the connection object.
+	 * This is done here rather than in the parser because it uses the literal()
+	 * method of the connection object.
 	 */
-	private List<List<String>> escapeRecords(List<List<String>> recordList, Connection connection/* =null */) throws InstantiationException,
-			IllegalAccessException, ClassNotFoundException {
+	private List<List<String>> escapeRecords(List<List<String>> recordList, Connection connection/*
+																								 * =
+																								 * null
+																								 */) throws InstantiationException, IllegalAccessException,
+			ClassNotFoundException {
 		List<List<String>> escapedRecords = new ArrayList<List<String>>();
 		for (List<String> aRec : recordList) {
 			List<String> escRec = new ArrayList<String>();
@@ -357,12 +395,20 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	}
 
 	/**
-	 * Populate tableName with data fetched by the parser, first advancing to resumePos.
+	 * Populate tableName with data fetched by the parser, first advancing to
+	 * resumePos.
 	 * 
-	 * For Full imports, if skipKeyViolators is True, any insertions which would violate the primary key constraint will be skipped and won't log errors.
+	 * For Full imports, if skipKeyViolators is True, any insertions which would
+	 * violate the primary key constraint will be skipped and won't log errors.
 	 */
-	private void populateTable(String tableName, long resumeNum/* =0 */, boolean isIncremental/* =False */, boolean skipKeyViolators/* =False */)
-			throws SQLException, IOException, SubstringNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+	private void populateTable(String tableName, long resumeNum/* =0 */, boolean isIncremental/*
+																								 * =
+																								 * False
+																								 */, boolean skipKeyViolators/*
+																															 * =
+																															 * False
+																															 */) throws SQLException,
+			IOException, SubstringNotFoundException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		// REPLACE is a MySQL extension which inserts if the key is new, or deletes and inserts if the key is a duplicate
 		String commandString = (isIncremental ? "REPLACE" : "INSERT");
@@ -417,7 +463,8 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	}
 
 	/**
-	 * A convenience method that just connects, drops tableName if it exists, and disconnects
+	 * A convenience method that just connects, drops tableName if it exists,
+	 * and disconnects
 	 */
 	private void dropTable(String tableName) throws NullPointerException, SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
@@ -427,8 +474,9 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	}
 
 	/**
-	 * Temporarily rename targetTable, then rename sourceTable to targetTable. If this succeeds, drop the renamed targetTable; otherwise revert it and drop
-	 * sourceTable.
+	 * Temporarily rename targetTable, then rename sourceTable to targetTable.
+	 * If this succeeds, drop the renamed targetTable; otherwise revert it and
+	 * drop sourceTable.
 	 */
 	private void renameAndDrop(String sourceTable, String targetTable) throws NullPointerException, SQLException, InstantiationException,
 			IllegalAccessException, ClassNotFoundException {
@@ -456,7 +504,8 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	}
 
 	/**
-	 * After incremental ingest data has been written to this.incTableName, union the pruned original table and the new table into a tmp table
+	 * After incremental ingest data has been written to this.incTableName,
+	 * union the pruned original table and the new table into a tmp table
 	 */
 	private void createUnionTable() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
@@ -468,7 +517,8 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	}
 
 	/**
-	 * Creates and returns the appropriate WHERE clause string used when pruning the target table during an incremental ingest
+	 * Creates and returns the appropriate WHERE clause string used when pruning
+	 * the target table during an incremental ingest
 	 */
 	private String incrementalWhereClause() {
 
@@ -484,7 +534,8 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	}
 
 	/**
-	 * Creates and returns the appropriate SELECT statement used when pruning the target table during an incremental ingest
+	 * Creates and returns the appropriate SELECT statement used when pruning
+	 * the target table during an incremental ingest
 	 */
 	private String incrementalSelectString() {
 
@@ -495,9 +546,11 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	}
 
 	/**
-	 * Creates and returns the appropriate UNION string used when merging the pruned table with the temporary incrmental table.
+	 * Creates and returns the appropriate UNION string used when merging the
+	 * pruned table with the temporary incrmental table.
 	 * 
-	 * The ingest and pruning process should preclude any dupes, so we can use ALL, which should be faster.
+	 * The ingest and pruning process should preclude any dupes, so we can use
+	 * ALL, which should be faster.
 	 */
 	private String incrementalUnionString() {
 
@@ -541,7 +594,7 @@ class MySqlIngester extends IngesterBase implements Ingester {
 				}
 			}
 		}
-		
+
 		return conn;
 	}
 }
