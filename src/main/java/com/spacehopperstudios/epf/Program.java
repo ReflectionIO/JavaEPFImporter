@@ -115,7 +115,8 @@ public class Program {
 	private static final Logger LOGGER;
 
 	/**
-	 * Snapshot is updated throughout the import; it is used for resuming interrupted imports
+	 * Snapshot is updated throughout the import; it is used for resuming
+	 * interrupted imports
 	 */
 	public static JsonObject SNAPSHOT_DICT;
 
@@ -379,22 +380,30 @@ public class Program {
 	}
 
 	/**
-	 * Perform a full import of the EPF files in the directory specified by directoryPath.
+	 * Perform a full import of the EPF files in the directory specified by
+	 * directoryPath.
 	 * 
 	 * importMode can be 'full' or 'incremental'
 	 * 
-	 * whiteList is a sequence of regular expressions. Only files whose basenames (i.e., the last element in the path) match one or more of the regexes in
-	 * whiteList will be imported. For example, whiteList=[".*song.*", ".*video.*"] would result in all files containing "song" or "video" anywhere in the
-	 * filename being imported, and the rest being ignored. To import only exact matches, precede the name with a caret (^) and follow it with a dollar sign
-	 * ($), e.g. "^video$".
+	 * whiteList is a sequence of regular expressions. Only files whose
+	 * basenames (i.e., the last element in the path) match one or more of the
+	 * regexes in whiteList will be imported. For example,
+	 * whiteList=[".*song.*", ".*video.*"] would result in all files containing
+	 * "song" or "video" anywhere in the filename being imported, and the rest
+	 * being ignored. To import only exact matches, precede the name with a
+	 * caret (^) and follow it with a dollar sign ($), e.g. "^video$".
 	 * 
 	 * The default is for all files to be whitelisted.
 	 * 
-	 * blackList works similarly; any filenames matching any of the items in blackList will be excluded from the import, even if they are matched in whiteList.
-	 * By default, any filename with a dot (".") in it will be excluded. Since EPF filenames never include a dot, this permits placing any file with an
-	 * extension (e.g., .txt) in the directory without disrupting the import.
+	 * blackList works similarly; any filenames matching any of the items in
+	 * blackList will be excluded from the import, even if they are matched in
+	 * whiteList. By default, any filename with a dot (".") in it will be
+	 * excluded. Since EPF filenames never include a dot, this permits placing
+	 * any file with an extension (e.g., .txt) in the directory without
+	 * disrupting the import.
 	 * 
-	 * Returns a list of any files for which the import failed (empty if all succeeded)
+	 * Returns a list of any files for which the import failed (empty if all
+	 * succeeded)
 	 */
 	public static List<String> doImport(String ingesterType, String directoryPath, String dbHost, String dbUser, String dbPassword, String dbName,
 			List<String> whiteList, List<String> blackList, String tablePrefix, boolean allowExtensions, boolean skipKeyViolators, String recordDelim,
@@ -581,16 +590,30 @@ public class Program {
 	}
 
 	/**
-	 * Resume an interrupted full import based on the values in currentDict, which will normally be the currentDict unarchived from the EPFSnapshot.json file.
+	 * Resume an interrupted full import based on the values in currentDict,
+	 * which will normally be the currentDict unarchived from the
+	 * EPFSnapshot.json file.
 	 */
-	public static List<String> resumeImport(JsonObject currentDict, String ingesterType, String tablePrefix /* = null */, String dbHost /* = "localhost" */,
-			String dbUser /*
-						 * = "epfimporter"
-						 */, String dbPassword /* = "epf123" */, String dbName /* = "epf" */, boolean skipKeyViolators /* = false */, String recordDelim /*
-																																						 * =
-																																						 * "\u0002\n"
-																																						 */,
-			String fieldDelim /* ="\u0001" */) {
+	public static List<String> resumeImport(JsonObject currentDict, String ingesterType, String tablePrefix /*
+																											 * =
+																											 * null
+																											 */, String dbHost /*
+																																 * =
+																																 * "localhost"
+																																 */, String dbUser /*
+																																					 * =
+																																					 * "epfimporter"
+																																					 */,
+			String dbPassword /* = "epf123" */, String dbName /* = "epf" */, boolean skipKeyViolators /*
+																									 * =
+																									 * false
+																									 */, String recordDelim /*
+																															 * =
+																															 * "\u0002\n"
+																															 */, String fieldDelim /*
+																																					 * =
+																																					 * "\u0001"
+																																					 */) {
 
 		String dirPath = currentDict.get(SNAPSHOT_DIRPATH).getAsString();
 		JsonArray stringArray = currentDict.get(SNAPSHOT_FILESLEFT).getAsJsonArray();
@@ -625,7 +648,8 @@ public class Program {
 	}
 
 	/**
-	 * Opens the file at filePath (creating it if it doesn't exist, overwriting if not), writes aDict to it in json format, then closes it
+	 * Opens the file at filePath (creating it if it doesn't exist, overwriting
+	 * if not), writes aDict to it in json format, then closes it
 	 */
 	private static void dumpDict(JsonObject aDict, String filePath) {
 		LOGGER.debug(String.format("Dumping dictionary: %s", aDict.toString()));
@@ -718,7 +742,7 @@ public class Program {
 		String tablePrefix = (String) optionsMap.get(OPTION_FULL_TABLEPREFIX);
 
 		String ingesterType = (String) optionsMap.get(OPTION_FULL_INGESTERTYPE);
-		
+
 		if (ingesterType == null) {
 			ingesterType = "MySQL";
 		}

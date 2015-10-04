@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="libs/commons-cli-1.2.jar" sourcepath="/Library/JavaDevLib/commons-cli-1.2/commons-cli-1.2-sources.jar">
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Library/JavaDevLib/commons-cli-1.2/commons-cli-1.2-javadoc.jar!/"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/gson-1.7.1.jar" sourcepath="/Library/JavaDevLib/google-gson-1.7.1/gson-1.7.1-sources.jar">
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
 		<attributes>
-			<attribute name="javadoc_location" value="jar:file:/Library/JavaDevLib/google-gson-1.7.1/gson-1.7.1-javadoc.jar!/"/>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/log4j-1.2.16.jar" sourcepath="/Library/JavaDevLib/apache-log4j-1.2.16/src"/>
-	<classpathentry kind="lib" path="libs/mysql-connector-java-5.1.10-bin.jar" sourcepath="/Library/JavaDevLib/mysql-connector-java-5.1.10/src"/>
-	<classpathentry kind="lib" path="libs/guava-14.0.1.jar" sourcepath="C:/Users/billy1380/.m2/repository/com/google/guava/guava/14.0.1/guava-14.0.1-sources.jar"/>
-	<classpathentry kind="lib" path="libs/appengine-api.jar"/>
-	<classpathentry kind="lib" path="libs/appengine-remote-api.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>

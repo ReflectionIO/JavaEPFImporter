@@ -59,7 +59,7 @@ public abstract class IngesterBase implements Ingester {
 	}
 
 	@Override
-	public void ingest(boolean skipKeyViolators/* =False */) {
+	public void ingest(boolean skipKeyViolators /* =False */) {
 
 		if ("INCREMENTAL".equals(this.parser.getExportMode())) {
 			this.ingestIncremental(0, skipKeyViolators);
