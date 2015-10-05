@@ -342,7 +342,7 @@ public class Program {
 			options.addOption(OPTION_SHORT_DBHOST, OPTION_FULL_DBHOST, true, "The hostname of the database (default is localhost)");
 
 			options.addOption(OPTION_SHORT_DBUSER, OPTION_FULL_DBUSER, true,
-					"The user which will execute the database commands; must have table create/drop priveleges");
+					"The user which will execute the database commands; must have table create/drop privileges");
 
 			options.addOption(OPTION_SHORT_DBPASSWORD, OPTION_FULL_DBPASSWORD, true, "The user's password for the database");
 
