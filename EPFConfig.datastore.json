@@ -1,0 +1,1 @@
+{"ingestertype":"DataStore","dbhost":"localhost:8888","dbuser":"test@example.com","dbpassword":"","dbname":"","allowextensions":false,"tableprefix":"epf","whitelist":[".*?"],"blacklist":["^\\."],"recordseparator":"\u0002\n","fieldseparator":"\u0001"}

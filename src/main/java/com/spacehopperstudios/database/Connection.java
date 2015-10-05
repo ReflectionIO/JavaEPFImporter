@@ -1,3 +1,10 @@
+//  
+//  Connection.java
+//  epfimporter
+//
+//  Created by William Shakour on October 4, 2015.
+//  Copyright © 2015 WillShex Limited. All rights reserved.
+//
 package com.spacehopperstudios.database;
 
 import java.sql.DriverManager;
@@ -7,6 +14,10 @@ import java.sql.Statement;
 
 import org.apache.log4j.Logger;
 
+/**
+ * @author William Shakour (billy1380)
+ *
+ */
 public class Connection {
 
 	private String server;
@@ -101,13 +112,15 @@ public class Connection {
 		return insertedId;
 	}
 
-	public void fetchNextRow() throws SQLException {
-
+	public boolean fetchNextRow() throws SQLException {
+		boolean fetched = false;
 		if (queryResult != null) {
-			if (queryResult.next()) {
+			if (fetched = queryResult.next()) {
 				// everyone is happy
 			}
 		}
+
+		return fetched;
 	}
 
 	public Object getCurrentRowValue(String key) throws SQLException {
