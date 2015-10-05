@@ -1,12 +1,12 @@
-JavaEPFImporter
-===============
+Java EPF Importer
+=================
 
-Java version of apple's EPF importer. The original scripts can be found at http://www.apple.com/itunes/affiliates/resources/documentation/epfimporter.html#configure-epfimporter.
+A version of apple's EPF importer written in Java. The original scripts can be found at http://www.apple.com/itunes/affiliates/resources/documentation/epfimporter.html#configure-epfimporter.
 
 ##Current supported ingesters
 
 - MySQL (original ingestor)
-- AppEngine using remote api
+- DataStore using appengine remote api
 
 There is also a fork [here](https://github.com/Cheers-Dev/JavaEPFImporter) that supports Postgres.
 
