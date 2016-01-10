@@ -12,6 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<appengine.version>1.9.30</appengine.version>
 	</properties>
 
 	<build>
@@ -49,13 +50,13 @@
 		<dependency>
 			<groupId>com.google.appengine</groupId>
 			<artifactId>appengine-api-1.0-sdk</artifactId>
-			<version>1.9.27</version>
+			<version>${appengine.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.google.appengine</groupId>
 			<artifactId>appengine-remote-api</artifactId>
-			<version>1.9.27</version>
+			<version>${appengine.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
