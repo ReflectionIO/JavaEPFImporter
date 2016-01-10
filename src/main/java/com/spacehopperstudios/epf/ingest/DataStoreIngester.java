@@ -38,19 +38,21 @@ import com.spacehopperstudios.epf.parse.V3Parser;
  */
 public class DataStoreIngester extends IngesterBase implements Ingester {
 
-	private static final Logger LOGGER = Logger.getLogger(DataStoreIngester.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(DataStoreIngester.class);
 
 	RemoteApiInstaller installer;
 
-	/*
-	 * (non-Javadoc)
+	/* (non-Javadoc)
 	 * 
-	 * @see com.spacehopperstudios.epf.ingest.Ingester#init(java.lang.String, com.spacehopperstudios.epf.parse.Parser, java.lang.String, java.lang.String,
-	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
+	 * @see com.spacehopperstudios.epf.ingest.Ingester#init(java.lang.String,
+	 * com.spacehopperstudios.epf.parse.Parser, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String,
+	 * java.lang.String, java.lang.String) */
 	@Override
-	public void init(String filePath, V3Parser parser, String tablePrefix, String dbHost, String dbUser, String dbPassword, String dbName, String recordDelim,
-			String fieldDelim) {
+	public void init (String filePath, V3Parser parser, String tablePrefix,
+			String dbHost, String dbUser, String dbPassword, String dbName,
+			String recordDelim, String fieldDelim) {
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Init started");
@@ -62,7 +64,14 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 
 		String[] split = dbHost.split(":");
 
-		RemoteApiOptions options = new RemoteApiOptions().server(split[0], split.length > 1 ? Integer.parseInt(split[1]) : 80).credentials(dbUser, dbPassword);
+		RemoteApiOptions options = new RemoteApiOptions().server(split[0],
+				split.length > 1 ? Integer.parseInt(split[1]) : 80);
+
+		if (split[0].equalsIgnoreCase("localhost")) {
+			options.useDevelopmentServerCredential();
+		} else {
+			options.useApplicationDefaultCredential();
+		}
 
 		installer = new RemoteApiInstaller();
 
@@ -84,18 +93,23 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 	 * 
 	 * This is done as follows: 1. Create a new table with a temporary name 2. Populate the new table 3. Drop the old table and rename the new one
 	 */
-	public void ingestFull(boolean skipKeyViolators/* =False */) {
+	public void ingestFull (boolean skipKeyViolators/* =False */) {
 
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info(String.format("Beginning full ingest of %s (%d records)", this.tableName, this.parser.getRecordsExpected()));
+			LOGGER.info(
+					String.format("Beginning full ingest of %s (%d records)",
+							this.tableName, this.parser.getRecordsExpected()));
 		}
 
 		this.startTime = new Date();
 		try {
 			populateTable(this.tableName, 0, false, skipKeyViolators);
 		} catch (Exception e) {
-			LOGGER.error(String.format("Error encountered while ingesting '%s'", this.filePath));
-			LOGGER.error(String.format("Last record ingested before failure: %d", this.lastRecordIngested));
+			LOGGER.error(String.format("Error encountered while ingesting '%s'",
+					this.filePath));
+			LOGGER.error(
+					String.format("Last record ingested before failure: %d",
+							this.lastRecordIngested));
 			throw new RuntimeException(e); // re-raise the exception
 		} finally {
 			if (installer != null) {
@@ -108,17 +122,21 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 		this.updateStatusDict();
 
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info(String.format("Full ingest of %s took %s", this.tableName, TimeHelper.durationText(startTime, endTime)));
+			LOGGER.info(
+					String.format("Full ingest of %s took %s", this.tableName,
+							TimeHelper.durationText(startTime, endTime)));
 		}
 	}
 
 	/**
 	 * Resume an interrupted full ingest, continuing from fromRecord.
 	 */
-	public void ingestFullResume(long fromRecord/* =0 */, boolean skipKeyViolators/* =False */) {
+	public void ingestFullResume (long fromRecord/* =0 */,
+			boolean skipKeyViolators/* =False */) {
 
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info(String.format("Resuming full ingest of %s (%d records)", this.tableName, this.parser.getRecordsExpected()));
+			LOGGER.info(String.format("Resuming full ingest of %s (%d records)",
+					this.tableName, this.parser.getRecordsExpected()));
 		}
 
 		this.lastRecordIngested = fromRecord - 1;
@@ -128,8 +146,11 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 			populateTable(this.tableName, fromRecord, false, skipKeyViolators);
 		} catch (Exception e) {
 			// LOGGER.error("Error %d: %s", e.args[0], e.args[1])
-			LOGGER.error(String.format("Error encountered while ingesting '%s'", this.filePath));
-			LOGGER.error(String.format("Last record ingested before failure: %d", this.lastRecordIngested));
+			LOGGER.error(String.format("Error encountered while ingesting '%s'",
+					this.filePath));
+			LOGGER.error(
+					String.format("Last record ingested before failure: %d",
+							this.lastRecordIngested));
 			throw new RuntimeException(e); // re-raise the exception
 		} finally {
 			if (installer != null) {
@@ -140,17 +161,22 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 		endTime = new Date();
 
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info(String.format("Resumed full ingest of %s took %s", this.tableName, TimeHelper.durationText(startTime, endTime)));
+			LOGGER.info(String.format("Resumed full ingest of %s took %s",
+					this.tableName,
+					TimeHelper.durationText(startTime, endTime)));
 		}
 	}
 
-	public void ingestIncremental(long fromRecord/* =0 */, boolean skipKeyViolators /* =False */) {
+	public void ingestIncremental (long fromRecord/* =0 */,
+			boolean skipKeyViolators /* =False */) {
 
 		try {
 			if (!this.tableExists(this.tableName)) {
 				// The table doesn't exist in the db; this can happen if the full ingest
 				// in which the table was added wasn't performed.
-				LOGGER.warn(String.format("Table '%s' does not exist in the database; skipping", this.tableName));
+				LOGGER.warn(String.format(
+						"Table '%s' does not exist in the database; skipping",
+						this.tableName));
 			} else {
 				int tableColCount = this.columnCount(null);
 				int fileColCount = this.parser.getColumnNames().size();
@@ -159,14 +185,18 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 				// to have fewer columns than the file we're importing, but it should never have more.
 
 				if (fileColCount > tableColCount) { // file has "extra" columns
-					LOGGER.warn("File contains additional columns not in the existing table. These will not be imported.");
-					this.parser.setColumnNames(this.parser.getColumnNames().subList(0, tableColCount)); // trim the columnNames
+					LOGGER.warn(
+							"File contains additional columns not in the existing table. These will not be imported.");
+					this.parser.setColumnNames(this.parser.getColumnNames()
+							.subList(0, tableColCount)); // trim the columnNames
 					// to equal those in the existing table. This will result in the returned records
 					// also being sliced.
 				}
 
 				String s = (fromRecord > 0 ? "Resuming" : "Beginning");
-				LOGGER.info(String.format("%s incremental ingest of %s (%d records)", s, this.tableName, this.parser.getRecordsExpected()));
+				LOGGER.info(String.format(
+						"%s incremental ingest of %s (%d records)", s,
+						this.tableName, this.parser.getRecordsExpected()));
 				this.startTime = new Date();
 
 				// Different ingest techniques are faster depending on the size of the input.
@@ -174,16 +204,22 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 				// for fewer records, it's faster to update the existing table.
 				try {
 					if (this.parser.getRecordsExpected() < 500000) { // update table in place
-						populateTable(this.tableName, fromRecord, true, skipKeyViolators);
+						populateTable(this.tableName, fromRecord, true,
+								skipKeyViolators);
 					} else {
 						// for now treat both as the same
-						populateTable(this.tableName, fromRecord, true, skipKeyViolators);
+						populateTable(this.tableName, fromRecord, true,
+								skipKeyViolators);
 					}
 
 				} catch (Exception e) {
 					// LOGGER.error("Error %d: %s", e.args[0], e.args[1])
-					LOGGER.error(String.format("Fatal error encountered while ingesting '%s'", this.filePath));
-					LOGGER.error(String.format("Last record ingested before failure: %d", this.lastRecordIngested));
+					LOGGER.error(String.format(
+							"Fatal error encountered while ingesting '%s'",
+							this.filePath));
+					LOGGER.error(String.format(
+							"Last record ingested before failure: %d",
+							this.lastRecordIngested));
 					this.abortTime = new Date();
 					this.didAbort = true;
 					this.updateStatusDict();
@@ -194,7 +230,9 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 				this.endTime = new Date();
 
 				if (LOGGER.isInfoEnabled()) {
-					LOGGER.info(String.format("Incremental ingest of %s took %s", this.tableName, TimeHelper.durationText(startTime, endTime)));
+					LOGGER.info(String.format(
+							"Incremental ingest of %s took %s", this.tableName,
+							TimeHelper.durationText(startTime, endTime)));
 				}
 			}
 		} catch (Exception e) {
@@ -208,7 +246,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 	 * @param object
 	 * @return
 	 */
-	private int columnCount(String tableName) {
+	private int columnCount (String tableName) {
 		Query query = new Query(tableName);
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 		PreparedQuery preparedQuery = ds.prepare(query);
@@ -221,7 +259,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 	 * @param tableName
 	 * @return
 	 */
-	private boolean tableExists(String tableName) {
+	private boolean tableExists (String tableName) {
 		Query query = new Query(tableName);
 		query.setKeysOnly();
 
@@ -240,8 +278,10 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 	 * @throws IOException
 	 * @throws SubstringNotFoundException
 	 */
-	private void populateTable(String tableName, long resumeNum/* =0 */, boolean isIncremental/* =False */, boolean skipKeyViolators/* =False */)
-			throws IOException, SubstringNotFoundException {
+	private void populateTable (String tableName, long resumeNum/* =0 */,
+			boolean isIncremental/* =False */,
+			boolean skipKeyViolators/* =False */)
+					throws IOException, SubstringNotFoundException {
 
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 
@@ -268,13 +308,20 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 					Collection<Filter> subfilters = new ArrayList<Filter>();
 
 					for (String key : this.parser.getPrimaryKey()) {
-						subfilters.add(new FilterPredicate(key, FilterOperator.EQUAL, getValue(key, this.parser.getColumnNames(), aRecord)));
+						subfilters.add(
+								new FilterPredicate(key, FilterOperator.EQUAL,
+										getValue(key,
+												this.parser.getColumnNames(),
+												aRecord)));
 					}
 
-					filter = new CompositeFilter(CompositeFilterOperator.AND, subfilters);
+					filter = new CompositeFilter(CompositeFilterOperator.AND,
+							subfilters);
 				} else if (this.parser.getPrimaryKey().size() > 0) {
 					String key = this.parser.getPrimaryKey().get(0);
-					filter = new FilterPredicate(key, FilterOperator.EQUAL, getValue(key, this.parser.getColumnNames(), aRecord));
+					filter = new FilterPredicate(key, FilterOperator.EQUAL,
+							getValue(key, this.parser.getColumnNames(),
+									aRecord));
 				}
 
 				Query query = new Query(tableName);
@@ -292,7 +339,8 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 				if (!newEntity && skipKeyViolators && !isIncremental) {
 
 				} else {
-					setEntityProperties(entity, this.parser.getPrimaryKey(), this.parser.getColumnNames(), aRecord, newEntity);
+					setEntityProperties(entity, this.parser.getPrimaryKey(),
+							this.parser.getColumnNames(), aRecord, newEntity);
 					entities.add(entity);
 				}
 			}
@@ -315,11 +363,13 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 	 * @param aRecord
 	 * @return
 	 */
-	private String getValue(String key, List<String> columnNames, List<String> values) {
+	private String getValue (String key, List<String> columnNames,
+			List<String> values) {
 		return values.get(columnNames.indexOf(key));
 	}
 
-	private void setEntityProperties(Entity entity, List<String> primaryKey, List<String> columnNames, List<String> record, boolean newEntity) {
+	private void setEntityProperties (Entity entity, List<String> primaryKey,
+			List<String> columnNames, List<String> record, boolean newEntity) {
 
 		for (int i = 0; i < columnNames.size(); i++) {
 			String exStr = record.get(i);
