@@ -8,10 +8,14 @@
 package com.spacehopperstudios.epf.ingest;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -41,7 +45,10 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 	private static final Logger LOGGER = Logger
 			.getLogger(DataStoreIngester.class);
 
-	RemoteApiInstaller installer;
+	private static final SimpleDateFormat DATE_TIME = new SimpleDateFormat(
+			"YYYY-MM-DD");
+
+	private RemoteApiInstaller installer;
 
 	/* (non-Javadoc)
 	 * 
@@ -286,6 +293,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 
 		this.parser.seekToRecord(resumeNum); // advance to resumeNum
+		Map<String, String> dataTypeLookup = null;
 
 		while (true) {
 
@@ -299,7 +307,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 
 			List<Entity> entities = new ArrayList<Entity>();
 
-			for (List<String> aRecord : records) {
+			for (List<String> record : records) {
 				boolean newEntity = false;
 
 				Filter filter = null;
@@ -312,7 +320,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 								new FilterPredicate(key, FilterOperator.EQUAL,
 										getValue(key,
 												this.parser.getColumnNames(),
-												aRecord)));
+												record)));
 					}
 
 					filter = new CompositeFilter(CompositeFilterOperator.AND,
@@ -321,7 +329,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 					String key = this.parser.getPrimaryKey().get(0);
 					filter = new FilterPredicate(key, FilterOperator.EQUAL,
 							getValue(key, this.parser.getColumnNames(),
-									aRecord));
+									record));
 				}
 
 				Query query = new Query(tableName);
@@ -332,15 +340,27 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 				Entity entity = preparedQuery.asSingleEntity();
 
 				if (entity == null) {
-					entity = new Entity(tableName);
 					newEntity = true;
+				}
+
+				if (dataTypeLookup == null) {
+					dataTypeLookup = new HashMap<String, String>();
+					List<String> dataTypes = this.parser.getDataTypes();
+					List<String> columnNames = this.parser.getColumnNames();
+
+					for (int i = 0; i < columnNames.size(); i++) {
+						dataTypeLookup.put(columnNames.get(i),
+								dataTypes.get(i));
+					}
 				}
 
 				if (!newEntity && skipKeyViolators && !isIncremental) {
 
 				} else {
-					setEntityProperties(entity, this.parser.getPrimaryKey(),
-							this.parser.getColumnNames(), aRecord, newEntity);
+					entity = setEntityProperties(tableName, entity,
+							this.parser.getPrimaryKey(),
+							this.parser.getColumnNames(), dataTypeLookup,
+							record, newEntity);
 					entities.add(entity);
 				}
 			}
@@ -368,27 +388,74 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 		return values.get(columnNames.indexOf(key));
 	}
 
-	private void setEntityProperties (Entity entity, List<String> primaryKey,
-			List<String> columnNames, List<String> record, boolean newEntity) {
+	Map<String, String> valueLookup = new HashMap<String, String>();
 
-		for (int i = 0; i < columnNames.size(); i++) {
-			String exStr = record.get(i);
-			String columnName = columnNames.get(i);
+	private Entity setEntityProperties (String tableName, Entity entity,
+			List<String> primaryKey, List<String> columnNames,
+			Map<String, String> dataTypes, List<String> record,
+			boolean newEntity) {
 
-			Object value = null;
+		valueLookup.clear();
+		for (int i = 0; i < record.size(); i++) {
+			valueLookup.put(columnNames.get(i), record.get(i));
+		}
 
-			if (!exStr.equalsIgnoreCase("'NULL'")) {
+		if (newEntity) {
+			switch (primaryKey.size()) {
+			case 0:
+				entity = new Entity(tableName);
+				break;
+			case 1:
+				if (dataTypes.get(primaryKey.get(0)).equals("INTEGER")) {
+					entity = new Entity(tableName,
+							convertToLong(valueLookup.get(primaryKey.get(0))));
+				} else {
+					entity = new Entity(tableName,
+							createStringId(primaryKey, valueLookup));
+				}
+				break;
+			default:
+				entity = new Entity(tableName,
+						createStringId(primaryKey, valueLookup));
+				break;
+			}
+		}
+
+		Object value;
+		String exStr, dataType;
+		for (String columnName : columnNames) {
+			value = null;
+			exStr = valueLookup.get(columnName);
+			dataType = dataTypes.get(columnName);
+
+			if (exStr.equalsIgnoreCase("'NULL'")
+					|| exStr.equalsIgnoreCase("NULL")
+					|| primaryKey.contains(columnName)) {
+				continue;
+			} else {
 				if (exStr.length() >= 500) {
 					value = new Text(exStr);
 				} else {
 					value = exStr;
 				}
 			}
-
-			if (primaryKey.contains(columnName)) {
-				entity.setProperty(columnName, value);
+			if (columnName.endsWith("date")) {
+				if (dataType.equals("BIGINT")) {
+					entity.setUnindexedProperty(columnName,
+							fromBigIntToDate(value));
+				} else if (dataType.equals("DATETIME")) {
+					entity.setUnindexedProperty(columnName,
+							fromDateTimeToDate(value));
+				} else {
+					entity.setUnindexedProperty(columnName, value);
+				}
 			} else {
-				entity.setUnindexedProperty(columnName, value);
+				if (dataType.equals("BIGINT")) {
+					entity.setUnindexedProperty(columnName,
+							convertToLong(value));
+				} else {
+					entity.setUnindexedProperty(columnName, value);
+				}
 			}
 		}
 
@@ -405,5 +472,38 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 			}
 		}
 
+		return entity;
+
+	}
+
+	private String createStringId (List<String> primaryKey,
+			Map<String, String> valueLookup) {
+		StringBuffer buffer = new StringBuffer();
+
+		for (String primaryKeyPart : primaryKey) {
+			if (buffer.length() != 0) {
+				buffer.append("_");
+			}
+
+			buffer.append(valueLookup.get(primaryKeyPart));
+		}
+
+		return buffer.toString();
+	}
+
+	private Date fromBigIntToDate (Object value) {
+		return new Date(convertToLong(value));
+	}
+
+	private Date fromDateTimeToDate (Object value) {
+		try {
+			return DATE_TIME.parse((String) value);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private long convertToLong (Object value) {
+		return Long.parseLong((String) value);
 	}
 }
