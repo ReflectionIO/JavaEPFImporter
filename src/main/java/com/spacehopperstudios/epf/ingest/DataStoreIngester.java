@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.CompositeFilter;
@@ -48,6 +49,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 	private static final SimpleDateFormat DATE_TIME = new SimpleDateFormat(
 			"YYYY-MM-DD");
 
+	private String tablePrefix;
 	private RemoteApiInstaller installer;
 
 	/* (non-Javadoc)
@@ -66,6 +68,8 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 		}
 
 		initTableName(filePath, tablePrefix);
+		this.tablePrefix = tablePrefix == null || tablePrefix.length() == 0 ? ""
+				: String.format("%s_", tablePrefix);
 
 		initVariables(parser);
 
@@ -439,7 +443,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 					value = exStr;
 				}
 			}
-			
+
 			if (columnName.endsWith("_date")) {
 				if (dataType.equals("BIGINT")) {
 					entity.setUnindexedProperty(columnName,
@@ -450,10 +454,22 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 				} else {
 					entity.setUnindexedProperty(columnName, value);
 				}
+			} else if (columnName.endsWith("_id")
+					&& dataType.equals("INTEGER")) {
+				entity.setIndexedProperty(columnName,
+						KeyFactory.createKey(
+								columnName.replace("_id", "").equals("parent")
+										? this.tableName
+										: this.tablePrefix
+												+ columnName.replace("_id", ""),
+								convertToLong(value)));
 			} else {
 				if (dataType.equals("BIGINT")) {
 					entity.setUnindexedProperty(columnName,
 							convertToLong(value));
+				} else if (dataType.equals("BOOLEAN")) {
+					entity.setUnindexedProperty(columnName,
+							convertToBoolean(value));
 				} else {
 					entity.setUnindexedProperty(columnName, value);
 				}
@@ -506,5 +522,9 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 
 	private long convertToLong (Object value) {
 		return Long.parseLong((String) value);
+	}
+
+	private boolean convertToBoolean (Object value) {
+		return Boolean.parseBoolean((String) value);
 	}
 }
