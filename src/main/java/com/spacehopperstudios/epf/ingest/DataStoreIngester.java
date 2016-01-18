@@ -439,7 +439,8 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 					value = exStr;
 				}
 			}
-			if (columnName.endsWith("date")) {
+			
+			if (columnName.endsWith("_date")) {
 				if (dataType.equals("BIGINT")) {
 					entity.setUnindexedProperty(columnName,
 							fromBigIntToDate(value));
