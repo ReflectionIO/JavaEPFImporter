@@ -434,7 +434,9 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 
 			if (exStr.equalsIgnoreCase("'NULL'")
 					|| exStr.equalsIgnoreCase("NULL")
-					|| primaryKey.contains(columnName)) {
+					// if we have more than one primary key they we probably should not skip them
+					|| (primaryKey.size() == 1
+							&& primaryKey.contains(columnName))) {
 				continue;
 			} else {
 				if (exStr.length() >= 500) {
@@ -463,6 +465,8 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 										: this.tablePrefix
 												+ columnName.replace("_id", ""),
 								convertToLong(value)));
+			} else if (primaryKey.contains(columnName)) {
+				entity.setIndexedProperty(columnName, value);
 			} else {
 				if (dataType.equals("BIGINT")) {
 					entity.setUnindexedProperty(columnName,
