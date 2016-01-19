@@ -1,0 +1,57 @@
+#export_datedevice_type_idname
+#primaryKey:device_type_id
+#dbTypes:BIGINTINTEGERVARCHAR(200)
+#exportMode:FULL
+##legal: IMPORTANT: The Apple Enterprise Partner Feed and data incorporated therein ("EPF")
+##legal: is supplied to you by Apple Inc. ("Apple") in consideration of your agreement to
+##legal: the following terms, and your use, installation, modification, or redistribution
+##legal: of the EPF constitutes acceptance of these terms.  If you do not agree with these
+##legal: terms, please do not use, install, modify, or redistribute the EPF.
+##legal: 
+##legal: In consideration of your agreement to abide by the following terms, and subject to
+##legal: these terms, Apple grants you a personal, non-exclusive, non-transferable, non-sublicenseable
+##legal: license to use, reproduce, modify, and redistribute the EPF solely in connection
+##legal: with links to the iTunes Store.  Except as expressly stated in this notice, no other
+##legal: rights or licenses, express or implied, are granted by Apple herein.  The EPF is
+##legal: provided by Apple on an "AS IS" basis.  APPLE MAKES NO WARRANTIES, EXPRESS OR IMPLIED,
+##legal: INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY
+##legal: AND FITNESS FOR A PARTICULAR PURPOSE, REGARDING THE EPF OR ITS USE AND OPERATION
+##legal: ALONE OR IN COMBINATION WITH YOUR MATERIALS. APPLE DOES NOT WARRANT THAT THE EPF
+##legal: WILL MEET YOUR REQUIREMENTS, THAT THEIR OPERATION WILL BE UNINTERRUPTED OR ERROR-FREE,
+##legal: THAT DEFECTS IN THE MATERIALS WILL BE CORRECTED, OR THAT THE EPF WILL BE COMPATIBLE
+##legal: WITH FUTURE APPLE PRODUCTS, SOFTWARE, OR SERVICES.  NO ORAL OR WRITTEN INFORMATION
+##legal: OR ADVICE GIVEN BY APPLE OR AN APPLE AUTHORIZED REPRESENTATIVE WILL CREATE A WARRANTY
+##legal: 
+##legal: IN NO EVENT SHALL APPLE BE LIABLE FOR ANY DIRECT, SPECIAL, INDIRECT, INCIDENTAL OR
+##legal: CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+##legal: OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) ARISING IN
+##legal: ANY WAY OUT OF THE USE, INABILITY TO USE, REPRODUCTION, MODIFICATION AND/OR DISTRIBUTION
+##legal: OF THE EPF, HOWEVER CAUSED AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING
+##legal: NEGLIGENCE), STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
+##legal: POSSIBILITY OF SUCH DAMAGE.
+##legal: 
+##legal: This agreement and your use of the EPF are governed by California law.
+##legal: 
+14520744010072iPhoneFirstGen
+14520744010073iPodTouchFirstGen
+14520744010074iPodTouchSecondGen
+14520744010075iPhone3G
+14520744010076iPhone3GS
+14520744010077iPadWifi
+14520744010078iPad3G
+145207440100710iPodTouchThirdGen
+14520744010079iPhone4
+145207440100711iPodTouchFourthGen
+145207440100712iPad2Wifi
+145207440100713iPad23G
+145207440100714MacDesktop
+145207440100715iPhone4S
+145207440100716iPadThirdGen
+145207440100717iPadThirdGen4G
+145207440100718iPhone5
+145207440100719iPodTouchFifthGen
+145207440100720iPadFourthGen
+145207440100721iPadFourthGen4G
+145207440100722iPadMini
+145207440100723iPadMini4G
+#recordsWritten:22

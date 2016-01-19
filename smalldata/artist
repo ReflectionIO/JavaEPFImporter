@@ -1,0 +1,120 @@
+#export_dateartist_idnameis_actual_artistview_urlartist_type_id
+#primaryKey:artist_id
+#dbTypes:BIGINTINTEGERVARCHAR(1000)BOOLEANVARCHAR(1000)INTEGER
+#exportMode:FULL
+##legal: IMPORTANT: The Apple Enterprise Partner Feed and data incorporated therein ("EPF")
+##legal: is supplied to you by Apple Inc. ("Apple") in consideration of your agreement to
+##legal: the following terms, and your use, installation, modification, or redistribution
+##legal: of the EPF constitutes acceptance of these terms.  If you do not agree with these
+##legal: terms, please do not use, install, modify, or redistribute the EPF.
+##legal: 
+##legal: In consideration of your agreement to abide by the following terms, and subject to
+##legal: these terms, Apple grants you a personal, non-exclusive, non-transferable, non-sublicenseable
+##legal: license to use, reproduce, modify, and redistribute the EPF solely in connection
+##legal: with links to the iTunes Store.  Except as expressly stated in this notice, no other
+##legal: rights or licenses, express or implied, are granted by Apple herein.  The EPF is
+##legal: provided by Apple on an "AS IS" basis.  APPLE MAKES NO WARRANTIES, EXPRESS OR IMPLIED,
+##legal: INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY
+##legal: AND FITNESS FOR A PARTICULAR PURPOSE, REGARDING THE EPF OR ITS USE AND OPERATION
+##legal: ALONE OR IN COMBINATION WITH YOUR MATERIALS. APPLE DOES NOT WARRANT THAT THE EPF
+##legal: WILL MEET YOUR REQUIREMENTS, THAT THEIR OPERATION WILL BE UNINTERRUPTED OR ERROR-FREE,
+##legal: THAT DEFECTS IN THE MATERIALS WILL BE CORRECTED, OR THAT THE EPF WILL BE COMPATIBLE
+##legal: WITH FUTURE APPLE PRODUCTS, SOFTWARE, OR SERVICES.  NO ORAL OR WRITTEN INFORMATION
+##legal: OR ADVICE GIVEN BY APPLE OR AN APPLE AUTHORIZED REPRESENTATIVE WILL CREATE A WARRANTY
+##legal: 
+##legal: IN NO EVENT SHALL APPLE BE LIABLE FOR ANY DIRECT, SPECIAL, INDIRECT, INCIDENTAL OR
+##legal: CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+##legal: OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) ARISING IN
+##legal: ANY WAY OUT OF THE USE, INABILITY TO USE, REPRODUCTION, MODIFICATION AND/OR DISTRIBUTION
+##legal: OF THE EPF, HOWEVER CAUSED AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING
+##legal: NEGLIGENCE), STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
+##legal: POSSIBILITY OF SUCH DAMAGE.
+##legal: 
+##legal: This agreement and your use of the EPF are governed by California law.
+##legal: 
+1452074401007341060Hugh Maguire1http://itunes.apple.com/artist/hugh-maguire/id341060?uo=51
+1452074401007341161Henryk Szeryng1http://itunes.apple.com/artist/henryk-szeryng/id341161?uo=51
+1452074401007341157Charles Reiner1http://itunes.apple.com/artist/charles-reiner/id341157?uo=51
+1452074401007341181George Pieterson1http://itunes.apple.com/artist/george-pieterson/id341181?uo=51
+1452074401007341191Vera Badings1http://itunes.apple.com/artist/vera-badings/id341191?uo=51
+1452074401007341209Stephen Bishop-Kovacevich1http://itunes.apple.com/artist/stephen-bishop-kovacevich/id341209?uo=51
+1452074401007341565Gerard Jouannest Ensemble1http://itunes.apple.com/artist/gerard-jouannest-ensemble/id341565?uo=51
+1452074401007341534Francois Rauber Orchestra1http://itunes.apple.com/artist/francois-rauber-orchestra/id341534?uo=51
+1452074401007341587Jean Corti1http://itunes.apple.com/artist/jean-corti/id341587?uo=51
+1452074401007341591Gerard Emile Jouannest1http://itunes.apple.com/artist/gerard-emile-jouannest/id341591?uo=51
+1452074401007341597Daniel Janin1http://itunes.apple.com/artist/daniel-janin/id341597?uo=51
+1452074401007334841Alan Schulman1http://itunes.apple.com/artist/alan-schulman/id334841?uo=51
+1452074401007335876Hot Action Cop1http://itunes.apple.com/artist/hot-action-cop/id335876?uo=51
+1452074401007336571Warner Jams, Vol 11http://itunes.apple.com/artist/warner-jams-vol-1/id336571?uo=51
+1452074401007336854Dirty Preston and Ric Diculous1http://itunes.apple.com/artist/dirty-preston-ric-diculous/id336854?uo=51
+1452074401007336861Ric Diculous1http://itunes.apple.com/artist/ric-diculous/id336861?uo=51
+1452074401007336883Dirty Preston1http://itunes.apple.com/artist/dirty-preston/id336883?uo=51
+1452074401007336719Mat Mathews Quintet1http://itunes.apple.com/artist/mat-mathews-quintet/id336719?uo=51
+1452074401007336942Cozy Cole's Big Seven1http://itunes.apple.com/artist/cozy-coles-big-seven/id336942?uo=51
+1452074401007336952Tony Scott and the All Stars1http://itunes.apple.com/artist/tony-scott-and-the-all-stars/id336952?uo=51
+1452074401007335470Jimmie Dale Gilmore1http://itunes.apple.com/artist/jimmie-dale-gilmore/id335470?uo=51
+1452074401007337387Sylvia Syms1http://itunes.apple.com/artist/sylvia-syms/id337387?uo=51
+1452074401007337359Jimmy Dorsey Orchestra1http://itunes.apple.com/artist/jimmy-dorsey-orchestra/id337359?uo=51
+1452074401007337410Teresa Brewer1http://itunes.apple.com/artist/teresa-brewer/id337410?uo=51
+1452074401007337366Connee Boswell1http://itunes.apple.com/artist/connee-boswell/id337366?uo=51
+1452074401007337574Jazzyfatnastees1http://itunes.apple.com/artist/jazzyfatnastees/id337574?uo=51
+1452074401007338271His Just Jazz All Stars1http://itunes.apple.com/artist/his-just-jazz-all-stars/id338271?uo=51
+1452074401007338247Charlie Teagarden1http://itunes.apple.com/artist/charlie-teagarden/id338247?uo=51
+1452074401007339446Cleve Francis1http://itunes.apple.com/artist/cleve-francis/id339446?uo=51
+1452074401007334187Sbarbaro1http://itunes.apple.com/artist/sbarbaro/id334187?uo=51
+1452074401007333770Rex Goh1http://itunes.apple.com/artist/rex-goh/id333770?uo=51
+1452074401007334202Chet Atkins & Jerry Reed1http://itunes.apple.com/artist/chet-atkins-jerry-reed/id334202?uo=51
+1452074401007333788Gary Portnoy1http://itunes.apple.com/artist/gary-portnoy/id333788?uo=51
+1452074401007334217Heyne1http://itunes.apple.com/artist/heyne/id334217?uo=51
+1452074401007334175DeCosta1http://itunes.apple.com/artist/decosta/id334175?uo=51
+1452074401007334111Dave Dreyer1http://itunes.apple.com/artist/dave-dreyer/id334111?uo=51
+1452074401007333837Timothy1http://itunes.apple.com/artist/timothy/id333837?uo=51
+1452074401007333908Thomas Bell1http://itunes.apple.com/artist/thomas-bell/id333908?uo=55
+1452074401007334355J. Bigham1http://itunes.apple.com/artist/j.-bigham/id334355?uo=51
+1452074401007334359P. Fisher1http://itunes.apple.com/artist/p.-fisher/id334359?uo=51
+1452074401007334343John Nelson A.K.A. Officer Parker1http://itunes.apple.com/artist/john-nelson-a.k.a.-officer/id334343?uo=51
+1452074401007334363N. Fisher1http://itunes.apple.com/artist/n.-fisher/id334363?uo=51
+1452074401007333928S. Wright1http://itunes.apple.com/artist/s.-wright/id333928?uo=51
+1452074401007334492Eugene Record1http://itunes.apple.com/artist/eugene-record/id334492?uo=51
+1452074401007334480Glen Stuart1http://itunes.apple.com/artist/glen-stuart/id334480?uo=51
+1452074401007334514L. Baldwin1http://itunes.apple.com/artist/l.-baldwin/id334514?uo=51
+1452074401007334533Dozier1http://itunes.apple.com/artist/dozier/id334533?uo=51
+1452074401007334584S. Carr1http://itunes.apple.com/artist/s.-carr/id334584?uo=51
+1452074401007334522Mario "Yellow Man" Winans1http://itunes.apple.com/artist/mario-yellow-man-winans/id334522?uo=51
+1452074401007334518J. Elder1http://itunes.apple.com/artist/j.-elder/id334518?uo=51
+1452074401007334037Harvey Dalton Arnold1http://itunes.apple.com/artist/harvey-dalton-arnold/id334037?uo=51
+1452074401007334537Holland1http://itunes.apple.com/artist/holland/id334537?uo=51
+1452074401007334105Frank Carle1http://itunes.apple.com/artist/frank-carle/id334105?uo=51
+1452074401007334206J. Hubbard1http://itunes.apple.com/artist/j.-hubbard/id334206?uo=51
+1452074401007334690Ruth Valaldares Correia1http://itunes.apple.com/artist/ruth-valaldares-correia/id334690?uo=51
+1452074401007334145Priscilla Hubbard1http://itunes.apple.com/artist/priscilla-hubbard/id334145?uo=51
+1452074401007334814Mark Herndon1http://itunes.apple.com/artist/mark-herndon/id334814?uo=51
+1452074401007332572Ricardo Díaz1http://itunes.apple.com/artist/ricardo-diaz/id332572?uo=51
+1452074401007332528Trio Matamoros1http://itunes.apple.com/artist/trio-matamoros/id332528?uo=51
+1452074401007332532R. Cueto1http://itunes.apple.com/artist/r.-cueto/id332532?uo=51
+1452074401007332642Los Grandes Pequeños1http://itunes.apple.com/artist/los-grandes-pequenos/id332642?uo=51
+1452074401007332628L. De Jesus1http://itunes.apple.com/artist/l.-de-jesus/id332628?uo=51
+1452074401007332619Guido Morra1http://itunes.apple.com/artist/guido-morra/id332619?uo=51
+1452074401007343362Buddy Rich Quintet1http://itunes.apple.com/artist/buddy-rich-quintet/id343362?uo=51
+1452074401007344317Tony MacAlpine1http://itunes.apple.com/artist/tony-macalpine/id344317?uo=51
+1452074401007345781Zydecajun1http://itunes.apple.com/artist/zydecajun/id345781?uo=51
+1452074401007346464Nino Bravo1http://itunes.apple.com/artist/nino-bravo/id346464?uo=51
+1452074401007346505Sinbad1http://itunes.apple.com/artist/sinbad/id346505?uo=51
+1452074401007346629Adam Gussow1http://itunes.apple.com/artist/adam-gussow/id346629?uo=51
+1452074401007346633Sterling Magee1http://itunes.apple.com/artist/sterling-magee/id346633?uo=51
+1452074401007347047Miles Jaye1http://itunes.apple.com/artist/miles-jaye/id347047?uo=51
+1452074401007347316Terry Noonan1http://itunes.apple.com/artist/terry-noonan/id347316?uo=51
+1452074401007348188Gear Daddies1http://itunes.apple.com/artist/gear-daddies/id348188?uo=51
+1452074401007348896The James Brown Orchestra1http://itunes.apple.com/artist/the-james-brown-orchestra/id348896?uo=51
+1452074401007349171Aladino1http://itunes.apple.com/artist/aladino/id349171?uo=51
+1452074401007349687Yagaboo1http://itunes.apple.com/artist/yagaboo/id349687?uo=51
+1452074401007349680Kin1http://itunes.apple.com/artist/kin/id349680?uo=51
+1452074401007349674Bonefide1http://itunes.apple.com/artist/bonefide/id349674?uo=51
+1452074401007349835Eduardo Verastegui1http://itunes.apple.com/artist/eduardo-verastegui/id349835?uo=51
+1452074401007349908Mary Jane Girls1http://itunes.apple.com/artist/mary-jane-girls/id349908?uo=51
+1452074401007350728Lehman Engel1http://itunes.apple.com/artist/lehman-engel/id350728?uo=51
+1452074401007350747Nancy Walker1http://itunes.apple.com/artist/nancy-walker/id350747?uo=51
+1452074401007350754Lyn Murray Chorus1http://itunes.apple.com/artist/lyn-murray-chorus/id350754?uo=51
+1452074401007350685Albert Linville1http://itunes.apple.com/artist/albert-linville/id350685?uo=51
+1452074401007350690Edith Adams1http://itunes.apple.com/artist/edith-adams/id350690?uo=51
+#recordsWritten:2

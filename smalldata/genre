@@ -1,0 +1,80 @@
+#export_dategenre_idparent_idname
+#primaryKey:genre_id
+#dbTypes:BIGINTINTEGERINTEGERVARCHAR(200)
+#exportMode:FULL
+##legal: IMPORTANT: The Apple Enterprise Partner Feed and data incorporated therein ("EPF")
+##legal: is supplied to you by Apple Inc. ("Apple") in consideration of your agreement to
+##legal: the following terms, and your use, installation, modification, or redistribution
+##legal: of the EPF constitutes acceptance of these terms.  If you do not agree with these
+##legal: terms, please do not use, install, modify, or redistribute the EPF.
+##legal: 
+##legal: In consideration of your agreement to abide by the following terms, and subject to
+##legal: these terms, Apple grants you a personal, non-exclusive, non-transferable, non-sublicenseable
+##legal: license to use, reproduce, modify, and redistribute the EPF solely in connection
+##legal: with links to the iTunes Store.  Except as expressly stated in this notice, no other
+##legal: rights or licenses, express or implied, are granted by Apple herein.  The EPF is
+##legal: provided by Apple on an "AS IS" basis.  APPLE MAKES NO WARRANTIES, EXPRESS OR IMPLIED,
+##legal: INCLUDING WITHOUT LIMITATION THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY
+##legal: AND FITNESS FOR A PARTICULAR PURPOSE, REGARDING THE EPF OR ITS USE AND OPERATION
+##legal: ALONE OR IN COMBINATION WITH YOUR MATERIALS. APPLE DOES NOT WARRANT THAT THE EPF
+##legal: WILL MEET YOUR REQUIREMENTS, THAT THEIR OPERATION WILL BE UNINTERRUPTED OR ERROR-FREE,
+##legal: THAT DEFECTS IN THE MATERIALS WILL BE CORRECTED, OR THAT THE EPF WILL BE COMPATIBLE
+##legal: WITH FUTURE APPLE PRODUCTS, SOFTWARE, OR SERVICES.  NO ORAL OR WRITTEN INFORMATION
+##legal: OR ADVICE GIVEN BY APPLE OR AN APPLE AUTHORIZED REPRESENTATIVE WILL CREATE A WARRANTY
+##legal: 
+##legal: IN NO EVENT SHALL APPLE BE LIABLE FOR ANY DIRECT, SPECIAL, INDIRECT, INCIDENTAL OR
+##legal: CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+##legal: OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) ARISING IN
+##legal: ANY WAY OUT OF THE USE, INABILITY TO USE, REPRODUCTION, MODIFICATION AND/OR DISTRIBUTION
+##legal: OF THE EPF, HOWEVER CAUSED AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING
+##legal: NEGLIGENCE), STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
+##legal: POSSIBILITY OF SUCH DAMAGE.
+##legal: 
+##legal: This agreement and your use of the EPF are governed by California law.
+##legal: 
+14520744010072734J-Pop
+14520744010072834Enka
+14520744010072934Anime
+14520744010073034Kayokyoku
+14520744010075000006950000024Romance
+14520744010075000007050000024Audiobooks Latino
+1452074401007132326Games & Hobbies
+145207440100714601323Hobbies
+145207440100714611323Other Games
+1452074401007132426Society & Culture
+145207440100714621324History
+145207440100714641314Other
+145207440100714661316College & High School
+145207440100714671316Amateur
+145207440100714681304Educational Technology
+145207440100714701304Training
+145207440100714711321Business News
+145207440100714721321Shopping
+145207440100714731325National
+145207440100714741325Regional
+145207440100714751325Local
+145207440100714761325Non-Profit
+145207440100714771315Natural Sciences
+145207440100714801318Software How-To
+145207440100714811307Alternative Health
+1452074401007440233Anime
+1452074401007440333Classics
+1452074401007440433Comedy
+1452074401007440533Documentary
+1452074401007440633Drama
+1452074401007440733Foreign
+1452074401007440833Horror
+1452074401007440933Independent
+1452074401007441033Kids & Family
+1452074401007441233Romance
+1452074401007441333Sci-Fi & Fantasy
+1452074401007441433Short Films
+1452074401007441533Special Interest
+1452074401007441633Thriller
+1452074401007441733Sports
+1452074401007441933Urban
+145207440100770156014Simulation
+145207440100770166014Sports
+145207440100770176014Strategy
+145207440100770186014Trivia
+#recordsWritten:2
