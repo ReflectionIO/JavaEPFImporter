@@ -439,7 +439,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 							&& primaryKey.contains(columnName))) {
 				continue;
 			} else {
-				if (exStr.length() >= 500) {
+				if (dataType.equals("LONGTEXT") || exStr.length() >= 500) {
 					value = new Text(exStr);
 				} else {
 					value = exStr;
@@ -449,28 +449,26 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 			if (columnName.endsWith("_date")) {
 				if (dataType.equals("BIGINT")) {
 					entity.setUnindexedProperty(columnName,
-							fromBigIntToDate(value));
+							convertBigIntToDate(value));
 				} else if (dataType.equals("DATETIME")) {
 					entity.setUnindexedProperty(columnName,
-							fromDateTimeToDate(value));
+							convertDateTimeToDate(value));
 				} else {
 					entity.setUnindexedProperty(columnName, value);
 				}
 			} else if (columnName.endsWith("_id")
 					&& dataType.equals("INTEGER")) {
-				entity.setIndexedProperty(columnName,
-						KeyFactory.createKey(
-								columnName.replace("_id", "").equals("parent")
-										? this.tableName
-										: this.tablePrefix
-												+ columnName.replace("_id", ""),
-								convertToLong(value)));
+				entity.setIndexedProperty(columnName, KeyFactory.createKey(
+						foreignTableName(columnName), convertToLong(value)));
 			} else if (primaryKey.contains(columnName)) {
 				entity.setIndexedProperty(columnName, value);
 			} else {
 				if (dataType.equals("BIGINT")) {
 					entity.setUnindexedProperty(columnName,
 							convertToLong(value));
+				} else if (dataType.startsWith("DECIMAL")) {
+					entity.setUnindexedProperty(columnName,
+							convertDecimalToLong(dataType, value));
 				} else if (dataType.equals("BOOLEAN")) {
 					entity.setUnindexedProperty(columnName,
 							convertToBoolean(value));
@@ -497,6 +495,58 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 
 	}
 
+	/**
+	 * @param dataType
+	 * @param value
+	 * @return
+	 */
+	private long convertDecimalToLong (String dataType, Object value) {
+		long converted = 0;
+		String stripped = dataType.replace(" ", "").replace("DECIMAL(", "")
+				.replace(")", "");
+		String[] split = stripped.split(",");
+		int suffix = Integer.parseInt(split[1]);
+
+		String stringValue = (String) value;
+		String[] splitValue = stringValue.split("\\.");
+
+		converted = Long.parseLong(splitValue[0]);
+
+		long prefixMultiplier = (long) Math.pow(10, suffix);
+
+		converted *= prefixMultiplier;
+
+		if (splitValue.length > 1) {
+			long suffixMultiplier = (long) Math.pow(10,
+					suffix - splitValue[1].length());
+
+			converted += Long.parseLong(splitValue[1]) * suffixMultiplier;
+		}
+
+		return converted;
+	}
+
+	/**
+	 * @return
+	 */
+	private String foreignTableName (String columnName) {
+		String foreignTableName;
+		switch (columnName) {
+		case "parent_id":
+			// AFAIK this only applies to genres
+			foreignTableName = this.tableName;
+			break;
+		case "primary_media_type_id":
+			foreignTableName = this.tablePrefix + "media_type";
+			break;
+		default:
+			foreignTableName = this.tablePrefix + columnName.replace("_id", "");
+			break;
+		}
+
+		return foreignTableName;
+	}
+
 	private String createStringId (List<String> primaryKey,
 			Map<String, String> valueLookup) {
 		StringBuffer buffer = new StringBuffer();
@@ -512,11 +562,11 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 		return buffer.toString();
 	}
 
-	private Date fromBigIntToDate (Object value) {
+	private Date convertBigIntToDate (Object value) {
 		return new Date(convertToLong(value));
 	}
 
-	private Date fromDateTimeToDate (Object value) {
+	private Date convertDateTimeToDate (Object value) {
 		try {
 			return DATE_TIME.parse((String) value);
 		} catch (ParseException e) {
