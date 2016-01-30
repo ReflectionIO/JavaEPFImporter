@@ -52,8 +52,10 @@ import com.spacehopperstudios.epf.parse.V3Parser;
  */
 public class Program {
 
-	private static final String USAGE_FORMAT = "usage: %s [-fxrak] [-d db_host] [-u db_user] [-p db_password] [-n db_name]" + "\r\n"
-			+ "[-s record_separator] [-t field_separator] [-w regex [-w regex2 [...]]]" + "\r\n"
+	private static final String USAGE_FORMAT = "usage: %s [-fxrak] [-d db_host] [-u db_user] [-p db_password] [-n db_name]"
+			+ "\r\n"
+			+ "[-s record_separator] [-t field_separator] [-w regex [-w regex2 [...]]]"
+			+ "\r\n"
 			+ "[-b regex [-b regex2 [...]]] source_directory [source_directory2 ...]";
 
 	private static final String OPTION_SHORT_FLAT = "f";
@@ -153,61 +155,81 @@ public class Program {
 		createLogFolder();
 	}
 
-	private static void createDefaultFlatConfigFile() {
+	private static void createDefaultFlatConfigFile () {
 		if (!(new File(FLAT_CONFIG_PATH)).exists()) {
 			JsonObject flatOptions = new JsonObject();
 
 			flatOptions.add(OPTION_FULL_DBHOST, new JsonPrimitive("localhost"));
-			flatOptions.add(OPTION_FULL_DBUSER, new JsonPrimitive("epfimporter"));
-			flatOptions.add(OPTION_FULL_DBPASSWORD, new JsonPrimitive("epf123"));
+			flatOptions.add(OPTION_FULL_DBUSER,
+					new JsonPrimitive("epfimporter"));
+			flatOptions.add(OPTION_FULL_DBPASSWORD,
+					new JsonPrimitive("epf123"));
 			flatOptions.add(OPTION_FULL_DBNAME, new JsonPrimitive("epf"));
-			flatOptions.add(OPTION_FULL_ALLOWEXTENSIONS, new JsonPrimitive(true));
-			flatOptions.add(OPTION_FULL_TABLEPREFIX, new JsonPrimitive("epfflat"));
-			flatOptions.add(OPTION_FULL_INGESTERTYPE, new JsonPrimitive("MySQL"));
+			flatOptions.add(OPTION_FULL_ALLOWEXTENSIONS,
+					new JsonPrimitive(true));
+			flatOptions.add(OPTION_FULL_TABLEPREFIX,
+					new JsonPrimitive("epfflat"));
+			flatOptions.add(OPTION_FULL_INGESTERTYPE,
+					new JsonPrimitive("MySQL"));
 
 			JsonArray stringArray = null;
-			flatOptions.add(OPTION_FULL_WHITELIST, stringArray = new JsonArray());
+			flatOptions.add(OPTION_FULL_WHITELIST,
+					stringArray = new JsonArray());
 			stringArray.add(new JsonPrimitive(".*?"));
 
-			flatOptions.add(OPTION_FULL_BLACKLIST, stringArray = new JsonArray());
+			flatOptions.add(OPTION_FULL_BLACKLIST,
+					stringArray = new JsonArray());
 			stringArray.add(new JsonPrimitive("^\\."));
 
-			flatOptions.add(OPTION_FULL_RECORDSEPARATOR, new JsonPrimitive("\n"));
-			flatOptions.add(OPTION_FULL_FIELDSEPARATOR, new JsonPrimitive("\t"));
+			flatOptions.add(OPTION_FULL_RECORDSEPARATOR,
+					new JsonPrimitive("\n"));
+			flatOptions.add(OPTION_FULL_FIELDSEPARATOR,
+					new JsonPrimitive("\t"));
 
 			dumpDict(flatOptions, FLAT_CONFIG_PATH);
 		}
 
 	}
 
-	private static void createDefaultConfigFile() {
+	private static void createDefaultConfigFile () {
 		if (!(new File(CONFIG_PATH)).exists()) {
 
 			JsonObject defaultOptions = new JsonObject();
 
-			defaultOptions.add(OPTION_FULL_DBHOST, new JsonPrimitive("localhost"));
-			defaultOptions.add(OPTION_FULL_DBUSER, new JsonPrimitive("epfimporter"));
-			defaultOptions.add(OPTION_FULL_DBPASSWORD, new JsonPrimitive("epf123"));
+			defaultOptions.add(OPTION_FULL_DBHOST,
+					new JsonPrimitive("localhost"));
+			defaultOptions.add(OPTION_FULL_DBUSER,
+					new JsonPrimitive("epfimporter"));
+			defaultOptions.add(OPTION_FULL_DBPASSWORD,
+					new JsonPrimitive("epf123"));
 			defaultOptions.add(OPTION_FULL_DBNAME, new JsonPrimitive("epf"));
-			defaultOptions.add(OPTION_FULL_ALLOWEXTENSIONS, new JsonPrimitive(false));
-			defaultOptions.add(OPTION_FULL_TABLEPREFIX, new JsonPrimitive("epf"));
-			defaultOptions.add(OPTION_FULL_INGESTERTYPE, new JsonPrimitive("MySQL"));
+			defaultOptions.add(OPTION_FULL_ALLOWEXTENSIONS,
+					new JsonPrimitive(false));
+			defaultOptions.add(OPTION_FULL_TABLEPREFIX,
+					new JsonPrimitive("epf"));
+			defaultOptions.add(OPTION_FULL_INGESTERTYPE,
+					new JsonPrimitive("MySQL"));
 
 			JsonArray stringArray = null;
-			defaultOptions.add(OPTION_FULL_WHITELIST, stringArray = new JsonArray());
+			defaultOptions.add(OPTION_FULL_WHITELIST,
+					stringArray = new JsonArray());
 			stringArray.add(new JsonPrimitive(".*?"));
 
-			defaultOptions.add(OPTION_FULL_BLACKLIST, stringArray = new JsonArray());
+			defaultOptions.add(OPTION_FULL_BLACKLIST,
+					stringArray = new JsonArray());
 			stringArray.add(new JsonPrimitive("^\\."));
 
-			defaultOptions.add(OPTION_FULL_RECORDSEPARATOR, new JsonPrimitive("\u0002\n"));
-			defaultOptions.add(OPTION_FULL_FIELDSEPARATOR, new JsonPrimitive("\u0001"));
+			defaultOptions.add(OPTION_FULL_RECORDSEPARATOR,
+					new JsonPrimitive("\u0002\n"));
+			defaultOptions.add(OPTION_FULL_FIELDSEPARATOR,
+					new JsonPrimitive("\u0001"));
 
 			dumpDict(defaultOptions, CONFIG_PATH);
 		}
 	}
 
-	private static void overwriteDefaults(Map<String, Object> defaults, CommandLine commandLine) {
+	private static void overwriteDefaults (Map<String, Object> defaults,
+			CommandLine commandLine) {
 		List<String> stringList = null;
 
 		if (commandLine.hasOption(OPTION_SHORT_FLAT)) {
@@ -219,31 +241,38 @@ public class Program {
 		}
 
 		if (commandLine.hasOption(OPTION_FULL_INGESTERTYPE)) {
-			defaults.put(OPTION_FULL_INGESTERTYPE, commandLine.getOptionValue(OPTION_FULL_INGESTERTYPE));
+			defaults.put(OPTION_FULL_INGESTERTYPE,
+					commandLine.getOptionValue(OPTION_FULL_INGESTERTYPE));
 		}
 
 		if (commandLine.hasOption(OPTION_SHORT_DBHOST)) {
-			defaults.put(OPTION_FULL_DBHOST, commandLine.getOptionValue(OPTION_SHORT_DBHOST));
+			defaults.put(OPTION_FULL_DBHOST,
+					commandLine.getOptionValue(OPTION_SHORT_DBHOST));
 		}
 
 		if (commandLine.hasOption(OPTION_SHORT_DBUSER)) {
-			defaults.put(OPTION_FULL_DBUSER, commandLine.getOptionValue(OPTION_SHORT_DBUSER));
+			defaults.put(OPTION_FULL_DBUSER,
+					commandLine.getOptionValue(OPTION_SHORT_DBUSER));
 		}
 
 		if (commandLine.hasOption(OPTION_SHORT_DBPASSWORD)) {
-			defaults.put(OPTION_FULL_DBPASSWORD, commandLine.getOptionValue(OPTION_SHORT_DBPASSWORD));
+			defaults.put(OPTION_FULL_DBPASSWORD,
+					commandLine.getOptionValue(OPTION_SHORT_DBPASSWORD));
 		}
 
 		if (commandLine.hasOption(OPTION_SHORT_DBNAME)) {
-			defaults.put(OPTION_FULL_DBNAME, commandLine.getOptionValue(OPTION_SHORT_DBNAME));
+			defaults.put(OPTION_FULL_DBNAME,
+					commandLine.getOptionValue(OPTION_SHORT_DBNAME));
 		}
 
 		if (commandLine.hasOption(OPTION_SHORT_RECORDSEPARATOR)) {
-			defaults.put(OPTION_FULL_RECORDSEPARATOR, commandLine.getOptionValue(OPTION_SHORT_RECORDSEPARATOR));
+			defaults.put(OPTION_FULL_RECORDSEPARATOR,
+					commandLine.getOptionValue(OPTION_SHORT_RECORDSEPARATOR));
 		}
 
 		if (commandLine.hasOption(OPTION_SHORT_FIELDSEPARATOR)) {
-			defaults.put(OPTION_FULL_FIELDSEPARATOR, commandLine.getOptionValue(OPTION_SHORT_FIELDSEPARATOR));
+			defaults.put(OPTION_FULL_FIELDSEPARATOR,
+					commandLine.getOptionValue(OPTION_SHORT_FIELDSEPARATOR));
 		}
 
 		if (commandLine.hasOption(OPTION_SHORT_ALLOWEXTENSIONS)) {
@@ -251,21 +280,27 @@ public class Program {
 		}
 
 		if (commandLine.hasOption(OPTION_SHORT_TABLEPREFIX)) {
-			defaults.put(OPTION_FULL_TABLEPREFIX, commandLine.getOptionValue(OPTION_SHORT_TABLEPREFIX));
+			defaults.put(OPTION_FULL_TABLEPREFIX,
+					commandLine.getOptionValue(OPTION_SHORT_TABLEPREFIX));
 		}
 
 		if (commandLine.hasOption(OPTION_SHORT_INGESTERTYPE)) {
-			defaults.put(OPTION_FULL_INGESTERTYPE, commandLine.getOptionValue(OPTION_SHORT_INGESTERTYPE));
+			defaults.put(OPTION_FULL_INGESTERTYPE,
+					commandLine.getOptionValue(OPTION_SHORT_INGESTERTYPE));
 		}
 
 		if (commandLine.hasOption(OPTION_SHORT_WHITELIST)) {
-			defaults.put(OPTION_FULL_WHITELIST, stringList = new ArrayList<String>());
-			Collections.addAll(stringList, commandLine.getOptionValues(OPTION_SHORT_WHITELIST));
+			defaults.put(OPTION_FULL_WHITELIST,
+					stringList = new ArrayList<String>());
+			Collections.addAll(stringList,
+					commandLine.getOptionValues(OPTION_SHORT_WHITELIST));
 		}
 
 		if (commandLine.hasOption(OPTION_SHORT_BLACKLIST)) {
-			defaults.put(OPTION_FULL_BLACKLIST, stringList = new ArrayList<String>());
-			Collections.addAll(stringList, commandLine.getOptionValues(OPTION_SHORT_BLACKLIST));
+			defaults.put(OPTION_FULL_BLACKLIST,
+					stringList = new ArrayList<String>());
+			Collections.addAll(stringList,
+					commandLine.getOptionValues(OPTION_SHORT_BLACKLIST));
 		}
 
 		if (commandLine.hasOption(OPTION_SHORT_SKIPKEYVIOLATORS)) {
@@ -274,42 +309,48 @@ public class Program {
 
 	}
 
-	private static void createLogFolder() {
+	private static void createLogFolder () {
 		File logFolder = new File(LOGS_FOLDER);
 
 		if (!logFolder.exists()) {
 
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(String.format("Not found log folder @ %s", LOGS_FOLDER));
+				LOGGER.debug(String.format("Not found log folder @ %s",
+						LOGS_FOLDER));
 			}
 
 			if (logFolder.mkdirs()) {
 				if (LOGGER.isInfoEnabled()) {
-					LOGGER.info(String.format("Created log folder @ %s", LOGS_FOLDER));
+					LOGGER.info(String.format("Created log folder @ %s",
+							LOGS_FOLDER));
 				}
 			}
 		} else {
 			if (LOGGER.isTraceEnabled()) {
-				LOGGER.trace(String.format("Fount log folder @ %s", LOGS_FOLDER));
+				LOGGER.trace(
+						String.format("Fount log folder @ %s", LOGS_FOLDER));
 			}
 		}
 	}
 
-	private static void configureLogger() {
+	private static void configureLogger () {
 		DOMConfigurator.configure(LOGGER_CONFIG_PATH);
 	}
 
-	private static JsonObject getFileConfig(String filePath) {
+	private static JsonObject getFileConfig (String filePath) {
 		JsonParser jsonParser = new JsonParser();
 		InputStream configStream = null;
 		JsonElement config = null;
 
 		try {
 			configStream = new FileInputStream(filePath);
-			InputStreamReader configReader = new InputStreamReader(configStream);
+			InputStreamReader configReader = new InputStreamReader(
+					configStream);
 			config = jsonParser.parse(configReader);
 		} catch (FileNotFoundException e) {
-			LOGGER.error(String.format("Error; config file %s not found", filePath), e);
+			LOGGER.error(
+					String.format("Error; config file %s not found", filePath),
+					e);
 		} finally {
 			if (configStream != null) {
 				try {
@@ -323,51 +364,67 @@ public class Program {
 		return config == null ? null : config.getAsJsonObject();
 	}
 
-	private static JsonObject getConfig(boolean isFlat) {
+	private static JsonObject getConfig (boolean isFlat) {
 		return getFileConfig(isFlat ? FLAT_CONFIG_PATH : CONFIG_PATH);
 	}
 
-	private static CommandLine parseArgs(String[] args, Map<String, Object> optionsMap) {
+	private static CommandLine parseArgs (String[] args,
+			Map<String, Object> optionsMap) {
 		Options options = new Options();
 		try {
 			CommandLineParser cliParser = new GnuParser();
 
-			options.addOption(OPTION_SHORT_FLAT, OPTION_FULL_FLAT, false, "Import EPF Flat files, using values from EPFFlat.config if not overridden");
+			options.addOption(OPTION_SHORT_FLAT, OPTION_FULL_FLAT, false,
+					"Import EPF Flat files, using values from EPFFlat.config if not overridden");
 			optionsMap.put(OPTION_FULL_FLAT, Boolean.FALSE);
 
 			options.addOption(OPTION_SHORT_RESUME, OPTION_FULL_RESUME, false,
 					"Resume the most recent import according to the relevant .json status file (EPFStatusIncremental.json if -i, otherwise EPFStatusFull.json)");
 			optionsMap.put(OPTION_FULL_RESUME, Boolean.FALSE);
 
-			options.addOption(OPTION_SHORT_DBHOST, OPTION_FULL_DBHOST, true, "The hostname of the database (default is localhost)");
+			options.addOption(OPTION_SHORT_DBHOST, OPTION_FULL_DBHOST, true,
+					"The hostname of the database (default is localhost)");
 
 			options.addOption(OPTION_SHORT_DBUSER, OPTION_FULL_DBUSER, true,
 					"The user which will execute the database commands; must have table create/drop privileges");
 
-			options.addOption(OPTION_SHORT_DBPASSWORD, OPTION_FULL_DBPASSWORD, true, "The user's password for the database");
+			options.addOption(OPTION_SHORT_DBPASSWORD, OPTION_FULL_DBPASSWORD,
+					true, "The user's password for the database");
 
-			options.addOption(OPTION_SHORT_DBNAME, OPTION_FULL_DBNAME, true, "The name of the database to connect to");
+			options.addOption(OPTION_SHORT_DBNAME, OPTION_FULL_DBNAME, true,
+					"The name of the database to connect to");
 
-			options.addOption(OPTION_SHORT_RECORDSEPARATOR, OPTION_FULL_RECORDSEPARATOR, true, "The string separating records in the file");
+			options.addOption(OPTION_SHORT_RECORDSEPARATOR,
+					OPTION_FULL_RECORDSEPARATOR, true,
+					"The string separating records in the file");
 
-			options.addOption(OPTION_SHORT_FIELDSEPARATOR, OPTION_FULL_FIELDSEPARATOR, true, "The string separating fields in the file");
+			options.addOption(OPTION_SHORT_FIELDSEPARATOR,
+					OPTION_FULL_FIELDSEPARATOR, true,
+					"The string separating fields in the file");
 
-			options.addOption(OPTION_SHORT_ALLOWEXTENSIONS, OPTION_FULL_ALLOWEXTENSIONS, false, "Include files with dots in their names in the import");
+			options.addOption(OPTION_SHORT_ALLOWEXTENSIONS,
+					OPTION_FULL_ALLOWEXTENSIONS, false,
+					"Include files with dots in their names in the import");
 			optionsMap.put(OPTION_FULL_ALLOWEXTENSIONS, Boolean.FALSE);
 
-			options.addOption(OPTION_SHORT_TABLEPREFIX, OPTION_FULL_TABLEPREFIX, true,
+			options.addOption(OPTION_SHORT_TABLEPREFIX, OPTION_FULL_TABLEPREFIX,
+					true,
 					"Optional prefix which will be added to all table names, e.g. \"MyPrefix_video_translation\"");
 
-			options.addOption(OPTION_SHORT_INGESTERTYPE, OPTION_FULL_INGESTERTYPE, true,
+			options.addOption(OPTION_SHORT_INGESTERTYPE,
+					OPTION_FULL_INGESTERTYPE, true,
 					"Ingester type name, currently the only ones supported are \"MySQL\" and \"DataStore\"");
 
-			options.addOption(OPTION_SHORT_WHITELIST, OPTION_FULL_WHITELIST, true,
+			options.addOption(OPTION_SHORT_WHITELIST, OPTION_FULL_WHITELIST,
+					true,
 					"A regular expression to add to the whiteList; repeated -w arguments will append");
 
-			options.addOption(OPTION_SHORT_BLACKLIST, OPTION_FULL_BLACKLIST, true,
+			options.addOption(OPTION_SHORT_BLACKLIST, OPTION_FULL_BLACKLIST,
+					true,
 					"A regular expression to add to the whiteList; repeated -b arguments will append");
 
-			options.addOption(OPTION_SHORT_SKIPKEYVIOLATORS, OPTION_FULL_SKIPKEYVIOLATORS, false,
+			options.addOption(OPTION_SHORT_SKIPKEYVIOLATORS,
+					OPTION_FULL_SKIPKEYVIOLATORS, false,
 					"Ignore inserts which would violate a primary key constraint; only applies to full imports");
 			optionsMap.put(OPTION_FULL_SKIPKEYVIOLATORS, Boolean.FALSE);
 
@@ -379,7 +436,8 @@ public class Program {
 			if (LOGGER.isInfoEnabled()) {
 				LOGGER.info(DESCRIPTION);
 				LOGGER.info(VERSION);
-				LOGGER.info(String.format(USAGE_FORMAT, "java -jar epfimporter.jar"));
+				LOGGER.info(String.format(USAGE_FORMAT,
+						"java -jar epfimporter.jar"));
 			}
 
 		}
@@ -413,9 +471,11 @@ public class Program {
 	 * Returns a list of any files for which the import failed (empty if all
 	 * succeeded)
 	 */
-	public static List<String> doImport(String ingesterType, String directoryPath, String dbHost, String dbUser, String dbPassword, String dbName,
-			List<String> whiteList, List<String> blackList, String tablePrefix, boolean allowExtensions, boolean skipKeyViolators, String recordDelim,
-			String fieldDelim) {
+	public static List<String> doImport (String ingesterType,
+			String directoryPath, String dbHost, String dbUser,
+			String dbPassword, String dbName, List<String> whiteList,
+			List<String> blackList, String tablePrefix, boolean allowExtensions,
+			boolean skipKeyViolators, String recordDelim, String fieldDelim) {
 
 		if (!allowExtensions) {
 			blackList.add(".*\\..*?");
@@ -446,7 +506,8 @@ public class Program {
 		String f;
 		for (int i = fileList.size() - 1; i >= 0; i--) {
 			f = fileList.get(i);
-			if (!wMatcher.matcher(f).matches() || bMatcher.matcher(f).matches()) {
+			if (!wMatcher.matcher(f).matches()
+					|| bMatcher.matcher(f).matches()) {
 				fileList.remove(f);
 			}
 		}
@@ -458,9 +519,11 @@ public class Program {
 		List<String> filesImported = new ArrayList<String>();
 		List<String> failedFiles = new ArrayList<String>();
 
-		SNAPSHOT_DICT.add(OPTION_FULL_INGESTERTYPE, new JsonPrimitive(ingesterType));
+		SNAPSHOT_DICT.add(OPTION_FULL_INGESTERTYPE,
+				new JsonPrimitive(ingesterType));
 
-		SNAPSHOT_DICT.add(OPTION_FULL_TABLEPREFIX, new JsonPrimitive(tablePrefix));
+		SNAPSHOT_DICT.add(OPTION_FULL_TABLEPREFIX,
+				new JsonPrimitive(tablePrefix));
 
 		JsonArray stringArray;
 		SNAPSHOT_DICT.add(SNAPSHOT_WLIST, stringArray = new JsonArray());
@@ -487,11 +550,15 @@ public class Program {
 
 		SNAPSHOT_DICT.add(SNAPSHOT_DIRSTOIMPORT, anotherArray);
 
-		JsonObject currentDict = SNAPSHOT_DICT.get(SNAPSHOT_CURRENTDICT).getAsJsonObject();
+		JsonObject currentDict = SNAPSHOT_DICT.get(SNAPSHOT_CURRENTDICT)
+				.getAsJsonObject();
 
-		currentDict.add(OPTION_FULL_RECORDSEPARATOR, new JsonPrimitive(recordDelim));
-		currentDict.add(OPTION_FULL_FIELDSEPARATOR, new JsonPrimitive(fieldDelim));
-		currentDict.add(SNAPSHOT_DIRPATH, new JsonPrimitive(dirPath.getAbsolutePath()));
+		currentDict.add(OPTION_FULL_RECORDSEPARATOR,
+				new JsonPrimitive(recordDelim));
+		currentDict.add(OPTION_FULL_FIELDSEPARATOR,
+				new JsonPrimitive(fieldDelim));
+		currentDict.add(SNAPSHOT_DIRPATH,
+				new JsonPrimitive(dirPath.getAbsolutePath()));
 
 		currentDict.add(SNAPSHOT_FILESTOIMPORT, stringArray = new JsonArray());
 		for (String file : fileList) {
@@ -522,7 +589,8 @@ public class Program {
 
 		Date startTime = new Date();
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info(String.format("Starting import of %s...", dirPath.getAbsolutePath()));
+			LOGGER.info(String.format("Starting import of %s...",
+					dirPath.getAbsolutePath()));
 		}
 
 		for (String aPath : pathList) {
@@ -538,11 +606,14 @@ public class Program {
 			try {
 				ing = IngesterProvider.getNamed(ingesterType);
 				V3Parser parser = new V3Parser();
-				parser.init(aPath, V3Parser.DEFAULT_TYPE_MAP, recordDelim, fieldDelim);
-				ing.init(aPath, parser, tablePrefix, dbHost, dbUser, dbPassword, dbName, recordDelim, fieldDelim);
+				parser.init(aPath, V3Parser.DEFAULT_TYPE_MAP, recordDelim,
+						fieldDelim);
+				ing.init(aPath, parser, tablePrefix, dbHost, dbUser, dbPassword,
+						dbName, recordDelim, fieldDelim);
 
 			} catch (Exception e) {
-				LOGGER.error(String.format("Unable to create EPFIngester for %s", fName), e);
+				LOGGER.error(String.format(
+						"Unable to create EPFIngester for %s", fName), e);
 				failedFiles.add(fName);
 				dumpDict(SNAPSHOT_DICT, SNAPSHOT_PATH);
 				continue;
@@ -552,21 +623,22 @@ public class Program {
 				ing.ingest(skipKeyViolators);
 
 				filesLeft.remove(fName);
-				currentDict.add(SNAPSHOT_FILESLEFT, stringArray = new JsonArray());
+				currentDict.add(SNAPSHOT_FILESLEFT,
+						stringArray = new JsonArray());
 				for (String file : filesLeft) {
 					stringArray.add(new JsonPrimitive(file));
 				}
 
 				filesImported.add(fName);
-				currentDict.add(SNAPSHOT_FILESIMPORTED, stringArray = new JsonArray());
+				currentDict.add(SNAPSHOT_FILESIMPORTED,
+						stringArray = new JsonArray());
 				for (String file : filesImported) {
 					stringArray.add(new JsonPrimitive(file));
 				}
 
 				dumpDict(SNAPSHOT_DICT, SNAPSHOT_PATH);
 			} catch (RuntimeException e) {
-				if (e.getCause() instanceof SQLException) {
-				} else {
+				if (e.getCause() instanceof SQLException) {} else {
 					LOGGER.error("An error occured while ingesting data.", e);
 				}
 
@@ -585,13 +657,17 @@ public class Program {
 		String dirName = dirPath.getName();
 
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info(String.format("Import of %s completed at: %s", dirName, TimeHelper.timeText(endTime)
+			LOGGER.info(String.format("Import of %s completed at: %s", dirName,
+					TimeHelper.timeText(endTime)
 			/* Ingester.DATETIME_FORMAT endTime) */));
-			LOGGER.info(String.format("Total import time for %s: %s", dirName, TimeHelper.durationText(startTime, endTime)));
+			LOGGER.info(String.format("Total import time for %s: %s", dirName,
+					TimeHelper.durationText(startTime, endTime)));
 		}
 
 		if (failedFiles != null && failedFiles.size() > 0) {
-			LOGGER.warn(String.format("The following files encountered errors and were not imported:\n %s", Joiner.on(", ").join(failedFiles)));
+			LOGGER.warn(String.format(
+					"The following files encountered errors and were not imported:\n %s",
+					Joiner.on(", ").join(failedFiles)));
 		}
 
 		return failedFiles;
@@ -602,36 +678,26 @@ public class Program {
 	 * which will normally be the currentDict unarchived from the
 	 * EPFSnapshot.json file.
 	 */
-	public static List<String> resumeImport(JsonObject currentDict, String ingesterType, String tablePrefix /*
-																											 * =
-																											 * null
-																											 */, String dbHost /*
-																																 * =
-																																 * "localhost"
-																																 */, String dbUser /*
-																																					 * =
-																																					 * "epfimporter"
-																																					 */,
-			String dbPassword /* = "epf123" */, String dbName /* = "epf" */, boolean skipKeyViolators /*
-																									 * =
-																									 * false
-																									 */, String recordDelim /*
-																															 * =
-																															 * "\u0002\n"
-																															 */, String fieldDelim /*
-																																					 * =
-																																					 * "\u0001"
-																																					 */) {
+	public static List<String> resumeImport (JsonObject currentDict,
+			String ingesterType, String tablePrefix /* = null */,
+			String dbHost /* = "localhost" */,
+			String dbUser /* = "epfimporter" */,
+			String dbPassword /* = "epf123" */, String dbName /* = "epf" */,
+			boolean skipKeyViolators /* = false */,
+			String recordDelim /* = "\u0002\n" */,
+			String fieldDelim /* = "\u0001" */) {
 
 		String dirPath = currentDict.get(SNAPSHOT_DIRPATH).getAsString();
-		JsonArray stringArray = currentDict.get(SNAPSHOT_FILESLEFT).getAsJsonArray();
+		JsonArray stringArray = currentDict.get(SNAPSHOT_FILESLEFT)
+				.getAsJsonArray();
 
 		List<String> filesLeft = new ArrayList<String>();
 		for (JsonElement element : stringArray) {
 			filesLeft.add(element.getAsString());
 		}
 
-		recordDelim = currentDict.get(OPTION_FULL_RECORDSEPARATOR).getAsString();
+		recordDelim = currentDict.get(OPTION_FULL_RECORDSEPARATOR)
+				.getAsString();
 		fieldDelim = currentDict.get(OPTION_FULL_FIELDSEPARATOR).getAsString();
 
 		List<String> wList = new ArrayList<String>();
@@ -651,7 +717,9 @@ public class Program {
 			bList.add(String.format("^%s$", aFile)); // anchor the regexes for exact matches
 		}
 
-		return doImport(ingesterType, dirPath, dbHost, dbUser, dbPassword, dbName, wList, bList, tablePrefix, false, skipKeyViolators, recordDelim, fieldDelim);
+		return doImport(ingesterType, dirPath, dbHost, dbUser, dbPassword,
+				dbName, wList, bList, tablePrefix, false, skipKeyViolators,
+				recordDelim, fieldDelim);
 
 	}
 
@@ -659,7 +727,7 @@ public class Program {
 	 * Opens the file at filePath (creating it if it doesn't exist, overwriting
 	 * if not), writes aDict to it in json format, then closes it
 	 */
-	private static void dumpDict(JsonObject aDict, String filePath) {
+	private static void dumpDict (JsonObject aDict, String filePath) {
 		LOGGER.debug(String.format("Dumping dictionary: %s", aDict.toString()));
 		LOGGER.debug(String.format("json path: %s", filePath));
 
@@ -679,7 +747,9 @@ public class Program {
 				try {
 					configWriter.close();
 				} catch (IOException e) {
-					LOGGER.error(String.format("Error closing file %s", filePath), e);
+					LOGGER.error(
+							String.format("Error closing file %s", filePath),
+							e);
 				}
 			}
 
@@ -687,7 +757,9 @@ public class Program {
 				try {
 					configStream.close();
 				} catch (IOException e) {
-					LOGGER.error(String.format("Error closing file %s", filePath), e);
+					LOGGER.error(
+							String.format("Error closing file %s", filePath),
+							e);
 				}
 			}
 		}
@@ -696,7 +768,7 @@ public class Program {
 	/**
 	 * Entry point for command-line execution
 	 */
-	public static void main(String[] args) {
+	public static void main (String[] args) {
 
 		// If the default config file doesn't exist, create it using these values.
 		createDefaultConfigFile();
@@ -712,7 +784,9 @@ public class Program {
 
 		@SuppressWarnings("unchecked")
 		List<String> dirsToImport = parsed.getArgList();
-		if ((dirsToImport == null || dirsToImport.size() == 0) && !((Boolean) optionsMap.get(OPTION_FULL_RESUME)).booleanValue()) {
+		if ((dirsToImport == null || dirsToImport.size() == 0)
+				&& !((Boolean) optionsMap.get(OPTION_FULL_RESUME))
+						.booleanValue()) {
 			if (LOGGER.isInfoEnabled()) {
 				LOGGER.info(DESCRIPTION);
 				LOGGER.info(VERSION);
@@ -722,7 +796,9 @@ public class Program {
 			return;
 		}
 
-		JsonObject config = getConfig(optionsMap.get(OPTION_FULL_FLAT) == null ? false : ((Boolean) optionsMap.get(OPTION_FULL_FLAT)).booleanValue());
+		JsonObject config = getConfig(optionsMap.get(OPTION_FULL_FLAT) == null
+				? false
+				: ((Boolean) optionsMap.get(OPTION_FULL_FLAT)).booleanValue());
 
 		for (Entry<String, JsonElement> entry : config.entrySet()) {
 			if (optionsMap.get(entry.getKey()) == null) {
@@ -733,7 +809,8 @@ public class Program {
 					if (entry.getValue().isJsonArray()) {
 						List<String> stringArray = new ArrayList<String>();
 
-						for (JsonElement element : entry.getValue().getAsJsonArray()) {
+						for (JsonElement element : entry.getValue()
+								.getAsJsonArray()) {
 							stringArray.add(element.getAsString());
 						}
 
@@ -756,14 +833,17 @@ public class Program {
 		}
 
 		@SuppressWarnings("unchecked")
-		List<String> wList = (List<String>) optionsMap.get(OPTION_FULL_WHITELIST);
+		List<String> wList = (List<String>) optionsMap
+				.get(OPTION_FULL_WHITELIST);
 
 		@SuppressWarnings("unchecked")
-		List<String> bList = (List<String>) optionsMap.get(OPTION_FULL_BLACKLIST);
+		List<String> bList = (List<String>) optionsMap
+				.get(OPTION_FULL_BLACKLIST);
 
 		String recordSep = (String) optionsMap.get(OPTION_FULL_RECORDSEPARATOR);
 		String fieldSep = (String) optionsMap.get(OPTION_FULL_FIELDSEPARATOR);
-		boolean allowExtensions = ((Boolean) optionsMap.get(OPTION_FULL_ALLOWEXTENSIONS)).booleanValue();
+		boolean allowExtensions = ((Boolean) optionsMap
+				.get(OPTION_FULL_ALLOWEXTENSIONS)).booleanValue();
 
 		JsonArray stringArray;
 
@@ -782,19 +862,29 @@ public class Program {
 		if (((Boolean) optionsMap.get(OPTION_FULL_RESUME)).booleanValue()) {
 			SNAPSHOT_DICT = loadSnapShot();
 
-			tablePrefix = SNAPSHOT_DICT.get(OPTION_FULL_TABLEPREFIX).getAsString();
-			JsonObject currentDict = SNAPSHOT_DICT.get(SNAPSHOT_CURRENTDICT).getAsJsonObject();
+			tablePrefix = SNAPSHOT_DICT.get(OPTION_FULL_TABLEPREFIX)
+					.getAsString();
+			JsonObject currentDict = SNAPSHOT_DICT.get(SNAPSHOT_CURRENTDICT)
+					.getAsJsonObject();
 
 			if (LOGGER.isInfoEnabled()) {
-				LOGGER.info(String.format("Resuming import for %s", currentDict.get(SNAPSHOT_DIRPATH).getAsString()));
+				LOGGER.info(String.format("Resuming import for %s",
+						currentDict.get(SNAPSHOT_DIRPATH).getAsString()));
 			}
 
-			List<String> failedFiles = resumeImport(currentDict, ingesterType, tablePrefix, (String) optionsMap.get(OPTION_FULL_DBHOST),
-					(String) optionsMap.get(OPTION_FULL_DBUSER), (String) optionsMap.get(OPTION_FULL_DBPASSWORD), (String) optionsMap.get(OPTION_FULL_DBNAME),
-					((Boolean) optionsMap.get(OPTION_FULL_SKIPKEYVIOLATORS)).booleanValue(), recordSep, fieldSep);
+			List<String> failedFiles = resumeImport(currentDict, ingesterType,
+					tablePrefix, (String) optionsMap.get(OPTION_FULL_DBHOST),
+					(String) optionsMap.get(OPTION_FULL_DBUSER),
+					(String) optionsMap.get(OPTION_FULL_DBPASSWORD),
+					(String) optionsMap.get(OPTION_FULL_DBNAME),
+					((Boolean) optionsMap.get(OPTION_FULL_SKIPKEYVIOLATORS))
+							.booleanValue(),
+					recordSep, fieldSep);
 
 			if (failedFiles != null && failedFiles.size() > 0) {
-				failedFilesMap.put(currentDict.get(SNAPSHOT_DIRPATH).getAsString(), failedFiles);
+				failedFilesMap.put(
+						currentDict.get(SNAPSHOT_DIRPATH).getAsString(),
+						failedFiles);
 			}
 
 			stringArray = SNAPSHOT_DICT.get(SNAPSHOT_DIRSLEFT).getAsJsonArray();
@@ -842,10 +932,15 @@ public class Program {
 
 		if (dirsToImport != null && dirsToImport.size() > 0) {
 			for (String dirPath : dirsToImport) {
-				List<String> failedFiles = doImport(ingesterType, dirPath, (String) optionsMap.get(OPTION_FULL_DBHOST),
-						(String) optionsMap.get(OPTION_FULL_DBUSER), (String) optionsMap.get(OPTION_FULL_DBPASSWORD),
-						(String) optionsMap.get(OPTION_FULL_DBNAME), wList, bList, tablePrefix, allowExtensions,
-						((Boolean) optionsMap.get(OPTION_FULL_SKIPKEYVIOLATORS)).booleanValue(), recordSep, fieldSep);
+				List<String> failedFiles = doImport(ingesterType, dirPath,
+						(String) optionsMap.get(OPTION_FULL_DBHOST),
+						(String) optionsMap.get(OPTION_FULL_DBUSER),
+						(String) optionsMap.get(OPTION_FULL_DBPASSWORD),
+						(String) optionsMap.get(OPTION_FULL_DBNAME), wList,
+						bList, tablePrefix, allowExtensions,
+						((Boolean) optionsMap.get(OPTION_FULL_SKIPKEYVIOLATORS))
+								.booleanValue(),
+						recordSep, fieldSep);
 
 				if (failedFiles != null && failedFiles.size() > 0) {
 					failedFilesMap.put(dirPath, failedFiles);
@@ -858,21 +953,26 @@ public class Program {
 		StringBuffer buffer = new StringBuffer();
 
 		for (String key : failedFilesMap.keySet()) {
-			buffer.append(String.format("    %s/%s", key, failedFilesMap.get(key)));
+			buffer.append(
+					String.format("    %s/%s", key, failedFilesMap.get(key)));
 			buffer.append("\n");
 		}
 
 		if (buffer.length() > 0) {
-			LOGGER.warn(String.format("The following files encountered errors and were not imported:\n    %s", buffer.toString()));
+			LOGGER.warn(String.format(
+					"The following files encountered errors and were not imported:\n    %s",
+					buffer.toString()));
 		}
 
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info(String.format("Total import time for all directories: %s", TimeHelper.durationText(startTime, endTime)));
+			LOGGER.info(
+					String.format("Total import time for all directories: %s",
+							TimeHelper.durationText(startTime, endTime)));
 		}
 
 	}
 
-	private static JsonObject loadSnapShot() {
+	private static JsonObject loadSnapShot () {
 
 		FileReader reader = null;
 
@@ -880,7 +980,8 @@ public class Program {
 			reader = new FileReader(SNAPSHOT_PATH);
 			return (new JsonParser()).parse(reader).getAsJsonObject();
 		} catch (FileNotFoundException e) {
-			LOGGER.error(String.format("Error locating file %s", SNAPSHOT_PATH), e);
+			LOGGER.error(String.format("Error locating file %s", SNAPSHOT_PATH),
+					e);
 		}
 
 		return SNAPSHOT_DICT;
