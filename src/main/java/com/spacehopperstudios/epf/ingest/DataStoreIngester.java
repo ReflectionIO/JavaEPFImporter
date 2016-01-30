@@ -121,6 +121,9 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 			LOGGER.error(
 					String.format("Last record ingested before failure: %d",
 							this.lastRecordIngested));
+			this.abortTime = new Date();
+			this.didAbort = true;
+			this.updateStatusDict();
 			throw new RuntimeException(e); // re-raise the exception
 		} finally {
 			if (installer != null) {
@@ -162,6 +165,9 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 			LOGGER.error(
 					String.format("Last record ingested before failure: %d",
 							this.lastRecordIngested));
+			this.abortTime = new Date();
+			this.didAbort = true;
+			this.updateStatusDict();
 			throw new RuntimeException(e); // re-raise the exception
 		} finally {
 			if (installer != null) {
