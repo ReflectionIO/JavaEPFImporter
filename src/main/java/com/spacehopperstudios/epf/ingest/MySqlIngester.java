@@ -146,6 +146,9 @@ class MySqlIngester extends IngesterBase implements Ingester {
 			LOGGER.error(
 					String.format("Last record ingested before failure: %d",
 							this.lastRecordIngested));
+			this.abortTime = new Date();
+			this.didAbort = true;
+			this.updateStatusDict();
 			throw new RuntimeException(e); // re-raise the exception
 		} catch (Exception e) {
 			throw new RuntimeException(e); // re-raise the exception
