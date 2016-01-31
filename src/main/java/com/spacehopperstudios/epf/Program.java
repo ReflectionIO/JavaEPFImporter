@@ -108,6 +108,8 @@ public class Program {
 
 	public static final String SNAPSHOT_PATH = "./EPFSnapshot.json";
 
+	public static final String SNAPSHOT_INGESTERTYPE = "ingesterType";
+	public static final String SNAPSHOT_TABLEPREFIX = "tablePrefix";
 	public static final String SNAPSHOT_DIRSLEFT = "dirsLeft";
 	public static final String SNAPSHOT_DIRSTOIMPORT = "dirsToImport";
 	public static final String SNAPSHOT_WLIST = "wList";
@@ -130,22 +132,47 @@ public class Program {
 	 */
 	public static JsonObject SNAPSHOT_DICT;
 
-	// FULL_STATUS_PATH = "./EPFStatusFull.json"
-	// INCREMENTAL_STATUS_PATH = "./EPFStatusIncremental.json"
-	// FULL_STATUS_DICT = {"tablePrefix":None, "dirsToImport":[], "dirsLeft":[], "currentDict":{}}
-	// INCREMENTAL_STATUS_DICT = {"tablePrefix":None, "dirsToImport":[], "dirsLeft":[], "currentDict":{}}
-	//
-	// STATUS_MAP = {"full":(FULL_STATUS_DICT, FULL_STATUS_PATH),
-	// "incremental":(INCREMENTAL_STATUS_DICT, INCREMENTAL_STATUS_PATH)}
+	public static final String FULL_STATUS_PATH = "./EPFStatusFull.json";
+	public static final String INCREMENTAL_STATUS_PATH = "./EPFStatusIncremental.json";
+
+	public static JsonObject FULL_STATUS_DICT;
+	public static JsonObject INCREMENTAL_STATUS_DICT;
+
+	public static JsonObject STATUS_MAP;
 
 	static {
 
 		SNAPSHOT_DICT = new JsonObject();
-
-		SNAPSHOT_DICT.add(OPTION_FULL_TABLEPREFIX, JsonNull.INSTANCE);
+		SNAPSHOT_DICT.add(SNAPSHOT_INGESTERTYPE, JsonNull.INSTANCE);
+		SNAPSHOT_DICT.add(SNAPSHOT_TABLEPREFIX, JsonNull.INSTANCE);
 		SNAPSHOT_DICT.add(SNAPSHOT_DIRSTOIMPORT, new JsonArray());
 		SNAPSHOT_DICT.add(SNAPSHOT_DIRSLEFT, new JsonArray());
 		SNAPSHOT_DICT.add(SNAPSHOT_CURRENTDICT, new JsonObject());
+
+		FULL_STATUS_DICT = new JsonObject();
+		FULL_STATUS_DICT.add(SNAPSHOT_INGESTERTYPE, JsonNull.INSTANCE);
+		FULL_STATUS_DICT.add(SNAPSHOT_TABLEPREFIX, JsonNull.INSTANCE);
+		FULL_STATUS_DICT.add(SNAPSHOT_DIRSTOIMPORT, new JsonArray());
+		FULL_STATUS_DICT.add(SNAPSHOT_DIRSLEFT, new JsonArray());
+		FULL_STATUS_DICT.add(SNAPSHOT_CURRENTDICT, new JsonObject());
+
+		INCREMENTAL_STATUS_DICT = new JsonObject();
+		INCREMENTAL_STATUS_DICT.add(SNAPSHOT_INGESTERTYPE, JsonNull.INSTANCE);
+		INCREMENTAL_STATUS_DICT.add(SNAPSHOT_TABLEPREFIX, JsonNull.INSTANCE);
+		INCREMENTAL_STATUS_DICT.add(SNAPSHOT_DIRSTOIMPORT, new JsonArray());
+		INCREMENTAL_STATUS_DICT.add(SNAPSHOT_DIRSLEFT, new JsonArray());
+		INCREMENTAL_STATUS_DICT.add(SNAPSHOT_CURRENTDICT, new JsonObject());
+
+		STATUS_MAP = new JsonObject();
+		JsonArray full;
+		STATUS_MAP.add("full", full = new JsonArray());
+		full.add(FULL_STATUS_DICT);
+		full.add(new JsonPrimitive(FULL_STATUS_PATH));
+
+		JsonArray incremental;
+		STATUS_MAP.add("incremental", incremental = new JsonArray());
+		incremental.add(INCREMENTAL_STATUS_DICT);
+		incremental.add(new JsonPrimitive(INCREMENTAL_STATUS_PATH));
 
 		configureLogger();
 
@@ -519,11 +546,10 @@ public class Program {
 		List<String> filesImported = new ArrayList<String>();
 		List<String> failedFiles = new ArrayList<String>();
 
-		SNAPSHOT_DICT.add(OPTION_FULL_INGESTERTYPE,
+		SNAPSHOT_DICT.add(SNAPSHOT_INGESTERTYPE,
 				new JsonPrimitive(ingesterType));
 
-		SNAPSHOT_DICT.add(OPTION_FULL_TABLEPREFIX,
-				new JsonPrimitive(tablePrefix));
+		SNAPSHOT_DICT.add(SNAPSHOT_TABLEPREFIX, new JsonPrimitive(tablePrefix));
 
 		JsonArray stringArray;
 		SNAPSHOT_DICT.add(SNAPSHOT_WLIST, stringArray = new JsonArray());
@@ -608,9 +634,8 @@ public class Program {
 				V3Parser parser = new V3Parser();
 				parser.init(aPath, V3Parser.DEFAULT_TYPE_MAP, recordDelim,
 						fieldDelim);
-				ing.init(aPath, parser, tablePrefix, dbHost, dbUser, dbPassword,
-						dbName, recordDelim, fieldDelim);
-
+				ing.init(aPath, parser, SNAPSHOT_DICT, tablePrefix, dbHost,
+						dbUser, dbPassword, dbName, recordDelim, fieldDelim);
 			} catch (Exception e) {
 				LOGGER.error(String.format(
 						"Unable to create EPFIngester for %s", fName), e);

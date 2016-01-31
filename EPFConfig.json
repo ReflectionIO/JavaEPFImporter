@@ -1,1 +1,1 @@
-{"dbhost":"localhost","dbuser":"epfimporter","dbpassword":"epf123","dbname":"epf","allowextensions":false,"tableprefix":"epf","whitelist":[".*?"],"blacklist":["^\\."],"recordseparator":"\u0002\n","fieldseparator":"\u0001"}
+{"ingestertype":"DataStore","dbhost":"recommend-media.appspot.com:443","dbuser":"","dbpassword":"","dbname":"","allowextensions":false,"tableprefix":"epf","whitelist":[".*?"],"blacklist":["^\\."],"recordseparator":"\u0002\n","fieldseparator":"\u0001"}

@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
+import com.google.gson.JsonObject;
 import com.spacehopperstudios.database.Connection;
 import com.spacehopperstudios.epf.SubstringNotFoundException;
 import com.spacehopperstudios.epf.TimeHelper;
@@ -48,7 +49,7 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	private String dbName;
 
 	@Override
-	public void init (String filePath, V3Parser parser,
+	public void init (String filePath, V3Parser parser, JsonObject statusDict,
 			String tablePrefix/* =null */, String dbHost/* = 'localhost' */,
 			String dbUser/* = 'epfimporter' */,
 			String dbPassword/* = 'epf123' */, String dbName/* = 'epf' */,
@@ -69,7 +70,7 @@ class MySqlIngester extends IngesterBase implements Ingester {
 		this.dbPassword = dbPassword;
 		this.dbName = dbName;
 
-		initVariables(parser);
+		initVariables(parser, statusDict);
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Init ended");

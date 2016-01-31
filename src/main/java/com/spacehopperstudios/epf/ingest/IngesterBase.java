@@ -9,9 +9,9 @@ package com.spacehopperstudios.epf.ingest;
 
 import java.io.File;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.spacehopperstudios.epf.parse.V3Parser;
 
 /**
@@ -22,7 +22,7 @@ public abstract class IngesterBase implements Ingester {
 
 	protected String tableName;
 
-	protected Map<String, String> statusDict;
+	protected JsonObject statusDict;
 	protected String filePath;
 	protected String fileName;
 
@@ -38,33 +38,49 @@ public abstract class IngesterBase implements Ingester {
 	protected long lastRecordCheck = 0;
 	protected Date lastTimeCheck;
 
-	public void updateStatusDict() {
-		this.statusDict.put("fileName", this.fileName);
-		this.statusDict.put("filePath", this.filePath);
-		this.statusDict.put("lastRecordIngested", Long.toString(this.lastRecordIngested));
+	public static final String STATUS_FILENAME = "fileName";
+	public static final String STATUS_FILEPATH = "filePath";
+	public static final String STATUS_LASTRECORD_INGESTED = "lastRecordIngested";
+	public static final String STATUS_STARTTIME = "startTime";
+	public static final String STATUS_ENDTIME = "endTime";
+	public static final String STATUS_ABORTTIME = "abortTime";
+	public static final String STATUS_DIDABORT = "didAbort";
+
+	protected void updateStatusDict () {
+		this.statusDict.add(STATUS_FILENAME, new JsonPrimitive(this.fileName));
+		this.statusDict.add(STATUS_FILEPATH, new JsonPrimitive(this.filePath));
+		this.statusDict.add(STATUS_LASTRECORD_INGESTED,
+				new JsonPrimitive(this.lastRecordIngested));
 
 		if (this.startTime != null) {
-			this.statusDict.put("startTime", this.startTime.toString());
+			this.statusDict.add(STATUS_STARTTIME,
+					new JsonPrimitive(this.startTime.getTime()));
 		}
 
 		if (endTime != null) {
-			this.statusDict.put("endTime", this.endTime.toString());
+			this.statusDict.add(STATUS_ENDTIME,
+					new JsonPrimitive(this.endTime.getTime()));
 		}
 
 		if (abortTime != null) {
-			this.statusDict.put("abortTime", this.abortTime.toString());
+			this.statusDict.add(STATUS_ABORTTIME,
+					new JsonPrimitive(this.abortTime.getTime()));
 		}
 
-		this.statusDict.put("didAbort", Boolean.toString(this.didAbort));
+		this.statusDict.add(STATUS_DIDABORT, new JsonPrimitive(this.didAbort));
 	}
 
 	@Override
-	public void ingest(boolean skipKeyViolators /* =False */) {
+	public void ingest (boolean skipKeyViolators /* =False */) {
 
 		if ("INCREMENTAL".equals(this.parser.getExportMode())) {
 			this.ingestIncremental(0, skipKeyViolators);
 		} else {
-			this.ingestFull(skipKeyViolators);
+			if (lastRecordIngested > 0 && didAbort) {
+				this.ingestFullResume(lastRecordIngested, skipKeyViolators);
+			} else {
+				this.ingestFull(skipKeyViolators);
+			}
 		}
 	}
 
@@ -74,14 +90,15 @@ public abstract class IngesterBase implements Ingester {
 	 * 
 	 * If both checks pass, returns this.lastRecordIngested; otherwise returns null.
 	 */
-	protected long checkProgress(int recordGap/* =5000 */, long timeGap/* =datetime.timedelta(0, 120, 0) */) {
+	protected long checkProgress (int recordGap/* =5000 */,
+			long timeGap/* =datetime.timedelta(0, 120, 0) */) {
 
 		if (this.lastRecordIngested - this.lastRecordCheck >= recordGap) {
 			Date t = new Date();
 			if (t.getTime() - this.lastTimeCheck.getTime() >= timeGap) {
 				this.lastTimeCheck = t;
 				this.lastRecordCheck = this.lastRecordIngested;
-				
+
 				return this.lastRecordCheck;
 			}
 		}
@@ -89,11 +106,12 @@ public abstract class IngesterBase implements Ingester {
 		return 0;
 	}
 
-	protected void initTableName(String filePath, String tablePrefix) {
+	protected void initTableName (String filePath, String tablePrefix) {
 
 		this.filePath = filePath;
 		this.fileName = (new File(filePath)).getName();
-		String pref = tablePrefix == null || tablePrefix.length() == 0 ? "" : String.format("%s_", tablePrefix);
+		String pref = tablePrefix == null || tablePrefix.length() == 0 ? ""
+				: String.format("%s_", tablePrefix);
 		this.tableName = (pref + this.fileName).replace("-", "_"); // hyphens aren't allowed in table names
 
 		if (this.tableName.contains(".")) {
@@ -101,20 +119,45 @@ public abstract class IngesterBase implements Ingester {
 		}
 	}
 
-	protected void initVariables(V3Parser parser) {
-		this.lastRecordIngested = -1;
-		
+	protected void initVariables (V3Parser parser, JsonObject statusDict) {
+		if (statusDict.has(STATUS_LASTRECORD_INGESTED)) {
+			this.lastRecordIngested = statusDict.get(STATUS_LASTRECORD_INGESTED)
+					.getAsLong();
+		} else {
+			this.lastRecordIngested = -1;
+		}
+
 		this.parser = (V3Parser) parser;
 
-		this.startTime = null;
-		this.endTime = null;
-		this.abortTime = null;
-		this.didAbort = false;
-		this.statusDict = new HashMap<String, String>();
+		if (statusDict.has(STATUS_STARTTIME)) {
+			this.startTime = new Date(
+					statusDict.get(STATUS_STARTTIME).getAsLong());
+		} else {
+			this.startTime = null;
+		}
 
-		this.updateStatusDict();
+		if (statusDict.has(STATUS_ENDTIME)) {
+			this.endTime = new Date(statusDict.get(STATUS_ENDTIME).getAsLong());
+		} else {
+			this.endTime = null;
+		}
+
+		if (statusDict.has(STATUS_ABORTTIME)) {
+			this.abortTime = new Date(
+					statusDict.get(STATUS_ABORTTIME).getAsLong());
+		} else {
+			this.abortTime = null;
+		}
+
+		if (statusDict.has(STATUS_DIDABORT)) {
+			this.didAbort = statusDict.get(STATUS_DIDABORT).getAsBoolean();
+		} else {
+			this.didAbort = false;
+		}
 
 		this.lastRecordCheck = 0;
 		this.lastTimeCheck = new Date();
+
+		this.statusDict = statusDict;
 	}
 }

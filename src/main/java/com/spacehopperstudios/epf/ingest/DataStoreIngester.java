@@ -33,6 +33,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Text;
 import com.google.appengine.tools.remoteapi.RemoteApiInstaller;
 import com.google.appengine.tools.remoteapi.RemoteApiOptions;
+import com.google.gson.JsonObject;
 import com.spacehopperstudios.epf.SubstringNotFoundException;
 import com.spacehopperstudios.epf.TimeHelper;
 import com.spacehopperstudios.epf.parse.V3Parser;
@@ -52,16 +53,10 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 	private String tablePrefix;
 	private RemoteApiInstaller installer;
 
-	/* (non-Javadoc)
-	 * 
-	 * @see com.spacehopperstudios.epf.ingest.Ingester#init(java.lang.String,
-	 * com.spacehopperstudios.epf.parse.Parser, java.lang.String,
-	 * java.lang.String, java.lang.String, java.lang.String, java.lang.String,
-	 * java.lang.String, java.lang.String) */
 	@Override
-	public void init (String filePath, V3Parser parser, String tablePrefix,
-			String dbHost, String dbUser, String dbPassword, String dbName,
-			String recordDelim, String fieldDelim) {
+	public void init (String filePath, V3Parser parser, JsonObject statusDict,
+			String tablePrefix, String dbHost, String dbUser, String dbPassword,
+			String dbName, String recordDelim, String fieldDelim) {
 
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("Init started");
@@ -71,7 +66,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 		this.tablePrefix = tablePrefix == null || tablePrefix.length() == 0 ? ""
 				: String.format("%s_", tablePrefix);
 
-		initVariables(parser);
+		initVariables(parser, statusDict);
 
 		String[] split = dbHost.split(":");
 

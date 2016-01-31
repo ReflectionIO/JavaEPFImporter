@@ -9,6 +9,7 @@ package com.spacehopperstudios.epf.ingest;
 
 import java.io.IOException;
 
+import com.google.gson.JsonObject;
 import com.spacehopperstudios.epf.SubstringNotFoundException;
 import com.spacehopperstudios.epf.parse.V3Parser;
 
@@ -17,25 +18,28 @@ import com.spacehopperstudios.epf.parse.V3Parser;
  * 
  */
 public interface Ingester {
-	void init(String filePath, V3Parser parser, String tablePrefix, String dbHost, String dbUser, String dbPassword, String dbName, String recordDelim,
-			String fieldDelim) throws IOException, SubstringNotFoundException;
+	void init (String filePath, V3Parser parser, JsonObject statusDict,
+			String tablePrefix, String dbHost, String dbUser, String dbPassword,
+			String dbName, String recordDelim, String fieldDelim)
+					throws IOException, SubstringNotFoundException;
 
 	/**
 	 * Perform a full or incremental ingest, depending on this.parser.exportMode
 	 */
-	void ingest(boolean skipViolators);
+	void ingest (boolean skipViolators);
 
 	/**
 	 * Perform a full ingest of the file at this.filePath.
 	 * 
 	 * This is done as follows: 1. Create a new table with a temporary name 2. Populate the new table 3. Drop the old table and rename the new one
 	 */
-	public void ingestFull(boolean skipKeyViolators/* =False */);
+	public void ingestFull (boolean skipKeyViolators/* =False */);
 
 	/**
 	 * Resume an interrupted full ingest, continuing from fromRecord.
 	 */
-	public void ingestFullResume(long fromRecord/* =0 */, boolean skipKeyViolators/* =False */);
+	public void ingestFullResume (long fromRecord/* =0 */,
+			boolean skipKeyViolators/* =False */);
 
 	/**
 	 * Update the table with the data in the file at filePath.
@@ -45,5 +49,7 @@ public interface Ingester {
 	 * old table whose primary keys *don't* match those in the new table, unions the result with all rows in the new table, and writes the resulting set to
 	 * another temporary table. 3. Swap out the old table for the new one via a rename (same as for Full ingests) This proves to be much faster for large files.
 	 */
-	void ingestIncremental(long fromRecord/* =0 */, boolean skipKeyViolators /* =False */);
+	void ingestIncremental (long fromRecord/* =0 */,
+			boolean skipKeyViolators /* =False */);
+
 }
