@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -123,6 +122,9 @@ public class Program {
 	private static final String LOGGER_CONFIG_PATH = "./EPFLogger.xml";
 
 	private static final Logger LOGGER;
+
+	private static final int[] FIBONACCI = new int[] { 1, 1, 2, 3, 5, 8, 13, 21,
+			34, 55, 89 };
 
 	/**
 	 * Snapshot is updated throughout the import; it is used for resuming
@@ -620,7 +622,20 @@ public class Program {
 			}
 
 			try {
-				ing.ingest(skipKeyViolators);
+				int attempt = 0;
+				while (true) {
+					try {
+						ing.ingest(skipKeyViolators);
+						break;
+					} catch (Exception e) {
+						if (attempt < FIBONACCI.length) {
+							Thread.sleep(FIBONACCI[attempt] * 1000);
+							attempt++;
+						} else {
+							throw e;
+						}
+					}
+				}
 
 				filesLeft.remove(fName);
 				currentDict.add(SNAPSHOT_FILESLEFT,
@@ -637,14 +652,6 @@ public class Program {
 				}
 
 				dumpDict(SNAPSHOT_DICT, SNAPSHOT_PATH);
-			} catch (RuntimeException e) {
-				if (e.getCause() instanceof SQLException) {} else {
-					LOGGER.error("An error occured while ingesting data.", e);
-				}
-
-				failedFiles.add(fName);
-				dumpDict(SNAPSHOT_DICT, SNAPSHOT_PATH);
-				continue;
 			} catch (Exception e) {
 				LOGGER.error("An error occured while ingesting data.", e);
 				failedFiles.add(fName);

@@ -38,10 +38,11 @@ public abstract class IngesterBase implements Ingester {
 	protected long lastRecordCheck = 0;
 	protected Date lastTimeCheck;
 
-	public void updateStatusDict() {
+	public void updateStatusDict () {
 		this.statusDict.put("fileName", this.fileName);
 		this.statusDict.put("filePath", this.filePath);
-		this.statusDict.put("lastRecordIngested", Long.toString(this.lastRecordIngested));
+		this.statusDict.put("lastRecordIngested",
+				Long.toString(this.lastRecordIngested));
 
 		if (this.startTime != null) {
 			this.statusDict.put("startTime", this.startTime.toString());
@@ -59,12 +60,16 @@ public abstract class IngesterBase implements Ingester {
 	}
 
 	@Override
-	public void ingest(boolean skipKeyViolators /* =False */) {
-
+	public void ingest (boolean skipKeyViolators /* =False */) {
 		if ("INCREMENTAL".equals(this.parser.getExportMode())) {
 			this.ingestIncremental(0, skipKeyViolators);
 		} else {
-			this.ingestFull(skipKeyViolators);
+			if (lastRecordIngested > 0 && didAbort) {
+				didAbort = false;
+				this.ingestFullResume(lastRecordIngested, skipKeyViolators);
+			} else {
+				this.ingestFull(skipKeyViolators);
+			}
 		}
 	}
 
@@ -74,14 +79,15 @@ public abstract class IngesterBase implements Ingester {
 	 * 
 	 * If both checks pass, returns this.lastRecordIngested; otherwise returns null.
 	 */
-	protected long checkProgress(int recordGap/* =5000 */, long timeGap/* =datetime.timedelta(0, 120, 0) */) {
+	protected long checkProgress (int recordGap/* =5000 */,
+			long timeGap/* =datetime.timedelta(0, 120, 0) */) {
 
 		if (this.lastRecordIngested - this.lastRecordCheck >= recordGap) {
 			Date t = new Date();
 			if (t.getTime() - this.lastTimeCheck.getTime() >= timeGap) {
 				this.lastTimeCheck = t;
 				this.lastRecordCheck = this.lastRecordIngested;
-				
+
 				return this.lastRecordCheck;
 			}
 		}
@@ -89,11 +95,12 @@ public abstract class IngesterBase implements Ingester {
 		return 0;
 	}
 
-	protected void initTableName(String filePath, String tablePrefix) {
+	protected void initTableName (String filePath, String tablePrefix) {
 
 		this.filePath = filePath;
 		this.fileName = (new File(filePath)).getName();
-		String pref = tablePrefix == null || tablePrefix.length() == 0 ? "" : String.format("%s_", tablePrefix);
+		String pref = tablePrefix == null || tablePrefix.length() == 0 ? ""
+				: String.format("%s_", tablePrefix);
 		this.tableName = (pref + this.fileName).replace("-", "_"); // hyphens aren't allowed in table names
 
 		if (this.tableName.contains(".")) {
@@ -101,9 +108,9 @@ public abstract class IngesterBase implements Ingester {
 		}
 	}
 
-	protected void initVariables(V3Parser parser) {
+	protected void initVariables (V3Parser parser) {
 		this.lastRecordIngested = -1;
-		
+
 		this.parser = (V3Parser) parser;
 
 		this.startTime = null;
