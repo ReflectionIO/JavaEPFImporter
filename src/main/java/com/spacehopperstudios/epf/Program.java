@@ -628,9 +628,15 @@ public class Program {
 						ing.ingest(skipKeyViolators);
 						break;
 					} catch (Exception e) {
+						LOGGER.error("Error occured while ingesting.", e);
+
 						if (attempt < FIBONACCI.length) {
-							Thread.sleep(FIBONACCI[attempt] * 1000);
+							long duration = FIBONACCI[attempt] * 1000;
 							attempt++;
+							LOGGER.info(String.format(
+									"Going to retry for the %d time, within %d millis",
+									attempt + 1, duration));
+							Thread.sleep(duration);
 						} else {
 							throw e;
 						}
