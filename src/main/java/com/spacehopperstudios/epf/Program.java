@@ -124,7 +124,7 @@ public class Program {
 	private static final Logger LOGGER;
 
 	private static final int[] FIBONACCI = new int[] { 1, 1, 2, 3, 5, 8, 13, 21,
-			34, 55, 89 };
+			34, 55, 89, 144, 233, 377, 610, 987 };
 
 	/**
 	 * Snapshot is updated throughout the import; it is used for resuming
