@@ -634,8 +634,8 @@ public class Program {
 							long duration = FIBONACCI[attempt] * 1000;
 							attempt++;
 							LOGGER.info(String.format(
-									"Going to retry for the %d time, within %d millis",
-									attempt + 1, duration));
+									"Going to retry (%d of %d times), after waiting for %d millis",
+									attempt, FIBONACCI.length, duration));
 							Thread.sleep(duration);
 						} else {
 							throw e;
