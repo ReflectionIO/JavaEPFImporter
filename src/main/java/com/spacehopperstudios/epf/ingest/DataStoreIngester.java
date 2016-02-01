@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +24,6 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.CompositeFilter;
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
-import com.google.appengine.api.datastore.Query.Filter;
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Text;
 import com.google.appengine.tools.remoteapi.RemoteApiInstaller;
 import com.google.appengine.tools.remoteapi.RemoteApiOptions;
@@ -51,6 +45,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 
 	private String tablePrefix;
 	private RemoteApiInstaller installer;
+	private String dbHost;
 
 	/* (non-Javadoc)
 	 * 
@@ -72,7 +67,15 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 				: String.format("%s_", tablePrefix);
 
 		initVariables(parser);
+		this.dbHost = dbHost;
 
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Init ended");
+		}
+
+	}
+
+	private void installRemoteApi () throws IOException {
 		String[] split = dbHost.split(":");
 
 		RemoteApiOptions options = new RemoteApiOptions().server(split[0],
@@ -90,13 +93,15 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 			installer.install(options);
 		} catch (IOException e) {
 			installer = null;
-			throw new RuntimeException(e); // re-raise the exception
+			throw e;
 		}
+	}
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Init ended");
+	private void uninstallRemoteApi () {
+		if (installer != null) {
+			installer.uninstall();
+			installer = null;
 		}
-
 	}
 
 	/**
@@ -114,6 +119,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 
 		this.startTime = new Date();
 		try {
+			installRemoteApi();
 			populateTable(this.tableName, 0, false, skipKeyViolators);
 		} catch (Exception e) {
 			LOGGER.error(String.format("Error encountered while ingesting '%s'",
@@ -126,9 +132,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 			this.updateStatusDict();
 			throw new RuntimeException(e); // re-raise the exception
 		} finally {
-			if (installer != null) {
-				installer.uninstall();
-			}
+			uninstallRemoteApi();
 		}
 
 		// ingest completed
@@ -157,9 +161,9 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 		this.startTime = new Date();
 
 		try {
+			installRemoteApi();
 			populateTable(this.tableName, fromRecord, false, skipKeyViolators);
 		} catch (Exception e) {
-			// LOGGER.error("Error %d: %s", e.args[0], e.args[1])
 			LOGGER.error(String.format("Error encountered while ingesting '%s'",
 					this.filePath));
 			LOGGER.error(
@@ -170,9 +174,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 			this.updateStatusDict();
 			throw new RuntimeException(e); // re-raise the exception
 		} finally {
-			if (installer != null) {
-				installer.uninstall();
-			}
+			uninstallRemoteApi();
 		}
 
 		endTime = new Date();
@@ -220,6 +222,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 				// If there are a large number of records, it's much faster to do a prune-and-merge technique;
 				// for fewer records, it's faster to update the existing table.
 				try {
+					installRemoteApi();
 					if (this.parser.getRecordsExpected() < 500000) { // update table in place
 						populateTable(this.tableName, fromRecord, true,
 								skipKeyViolators);
@@ -253,7 +256,9 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 				}
 			}
 		} catch (Exception e) {
-			throw new RuntimeException(e); // re-raise the exception
+			throw e; // re-raise the exception - will eventually do something different here
+		} finally {
+			uninstallRemoteApi();
 		}
 
 		this.updateStatusDict();
@@ -307,9 +312,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 
 		while (true) {
 
-			// By default, we concatenate 200 inserts into a single INSERT statement.
-			// a large batch size per insert improves performance, until you start hitting max_packet_size issues.
-			// If you increase MySQL server's max_packet_size, you may get increased performance by increasing maxNum
+			// By default, we concatenate 200 inserts into a single call
 			List<List<String>> records = this.parser.nextRecords(200);
 			if (records == null || records.size() == 0) {
 				break;
@@ -318,40 +321,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 			List<Entity> entities = new ArrayList<Entity>();
 
 			for (List<String> record : records) {
-				boolean newEntity = false;
-
-				Filter filter = null;
-
-				if (this.parser.getPrimaryKey().size() > 1) {
-					Collection<Filter> subfilters = new ArrayList<Filter>();
-
-					for (String key : this.parser.getPrimaryKey()) {
-						subfilters.add(
-								new FilterPredicate(key, FilterOperator.EQUAL,
-										getValue(key,
-												this.parser.getColumnNames(),
-												record)));
-					}
-
-					filter = new CompositeFilter(CompositeFilterOperator.AND,
-							subfilters);
-				} else if (this.parser.getPrimaryKey().size() > 0) {
-					String key = this.parser.getPrimaryKey().get(0);
-					filter = new FilterPredicate(key, FilterOperator.EQUAL,
-							getValue(key, this.parser.getColumnNames(),
-									record));
-				}
-
-				Query query = new Query(tableName);
-				query.setFilter(filter);
-
-				PreparedQuery preparedQuery = ds.prepare(query);
-
-				Entity entity = preparedQuery.asSingleEntity();
-
-				if (entity == null) {
-					newEntity = true;
-				}
+				Entity entity;
 
 				if (dataTypeLookup == null) {
 					dataTypeLookup = new HashMap<String, String>();
@@ -364,13 +334,13 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 					}
 				}
 
-				if (!newEntity && skipKeyViolators && !isIncremental) {
+				if (skipKeyViolators && !isIncremental) {
 
 				} else {
-					entity = setEntityProperties(tableName, entity,
+					entity = setEntityProperties(tableName, null,
 							this.parser.getPrimaryKey(),
 							this.parser.getColumnNames(), dataTypeLookup,
-							record, newEntity);
+							record, true);
 					entities.add(entity);
 				}
 			}
@@ -386,16 +356,6 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 				}
 			}
 		}
-	}
-
-	/**
-	 * @param primaryKey
-	 * @param aRecord
-	 * @return
-	 */
-	private String getValue (String key, List<String> columnNames,
-			List<String> values) {
-		return values.get(columnNames.indexOf(key));
 	}
 
 	Map<String, String> valueLookup = new HashMap<String, String>();
