@@ -130,6 +130,12 @@ public abstract class IngesterBase implements Ingester {
 		this.lastTimeCheck = new Date();
 	}
 
+	/**
+	 * Method runs runnable and retries with back-off in case of an exception. The runnable is run on the same thread.
+	 * @param runnable
+	 * @param logger
+	 * @throws InterruptedException
+	 */
 	protected void runWithFibonacciBackoff (Runnable runnable, Logger logger)
 			throws InterruptedException {
 		int attempt = 0;
