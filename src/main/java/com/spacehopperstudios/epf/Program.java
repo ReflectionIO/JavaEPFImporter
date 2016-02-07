@@ -123,9 +123,6 @@ public class Program {
 
 	private static final Logger LOGGER;
 
-	private static final int[] FIBONACCI = new int[] { 1, 1, 2, 3, 5, 8, 13, 21,
-			34, 55, 89, 144, 233, 377, 610, 987 };
-
 	/**
 	 * Snapshot is updated throughout the import; it is used for resuming
 	 * interrupted imports
@@ -622,26 +619,7 @@ public class Program {
 			}
 
 			try {
-				int attempt = 0;
-				while (true) {
-					try {
-						ing.ingest(skipKeyViolators);
-						break;
-					} catch (Exception e) {
-						LOGGER.error("Error occured while ingesting.", e);
-
-						if (attempt < FIBONACCI.length) {
-							long duration = FIBONACCI[attempt] * 1000;
-							attempt++;
-							LOGGER.info(String.format(
-									"Going to retry (%d of %d times), after waiting for %d millis",
-									attempt, FIBONACCI.length, duration));
-							Thread.sleep(duration);
-						} else {
-							throw e;
-						}
-					}
-				}
+				ing.ingest(skipKeyViolators);
 
 				filesLeft.remove(fName);
 				currentDict.add(SNAPSHOT_FILESLEFT,

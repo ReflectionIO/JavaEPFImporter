@@ -299,13 +299,15 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 	 * 
 	 * @throws IOException
 	 * @throws SubstringNotFoundException
+	 * @throws InterruptedException 
 	 */
 	private void populateTable (String tableName, long resumeNum/* =0 */,
 			boolean isIncremental/* =False */,
-			boolean skipKeyViolators/* =False */)
-					throws IOException, SubstringNotFoundException {
+			boolean skipKeyViolators/* =False */) throws IOException,
+					SubstringNotFoundException, InterruptedException {
 
-		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+		final DatastoreService ds = DatastoreServiceFactory
+				.getDatastoreService();
 
 		this.parser.seekToRecord(resumeNum); // advance to resumeNum
 		Map<String, String> dataTypeLookup = null;
@@ -318,7 +320,7 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 				break;
 			}
 
-			List<Entity> entities = new ArrayList<Entity>();
+			final List<Entity> entities = new ArrayList<Entity>();
 
 			for (List<String> record : records) {
 				Entity entity;
@@ -345,7 +347,11 @@ public class DataStoreIngester extends IngesterBase implements Ingester {
 				}
 			}
 
-			ds.put(entities);
+			runWithFibonacciBackoff(new Runnable() {
+				public void run () {
+					ds.put(entities);
+				}
+			}, LOGGER);
 
 			this.lastRecordIngested = this.parser.getLatestRecordNum();
 			long recCheck = checkProgress(5000, 120 * 1000);
