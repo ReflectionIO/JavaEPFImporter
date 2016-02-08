@@ -430,13 +430,14 @@ class MySqlIngester extends IngesterBase implements Ingester {
 	 * 
 	 * For Full imports, if skipKeyViolators is True, any insertions which would
 	 * violate the primary key constraint will be skipped and won't log errors.
+	 * @throws InterruptedException 
 	 */
 	private void populateTable (String tableName, long resumeNum/* =0 */,
 			boolean isIncremental/* = False */,
-			boolean skipKeyViolators/* = False */)
-					throws SQLException, IOException,
-					SubstringNotFoundException, InstantiationException,
-					IllegalAccessException, ClassNotFoundException {
+			boolean skipKeyViolators/* = False */) throws SQLException,
+					IOException, SubstringNotFoundException,
+					InstantiationException, IllegalAccessException,
+					ClassNotFoundException, InterruptedException {
 
 		// REPLACE is a MySQL extension which inserts if the key is new, or deletes and inserts if the key is a duplicate
 		String commandString = (isIncremental ? "REPLACE" : "INSERT");
@@ -447,7 +448,10 @@ class MySqlIngester extends IngesterBase implements Ingester {
 				Joiner.on(", ").join(this.parser.getColumnNames()));
 
 		this.parser.seekToRecord(resumeNum); // advance to resumeNum
-		Connection conn = this.connect();
+
+		// create reference using array trick to allow final and update connection
+		final Connection[] conn = new Connection[1];
+		conn[0] = this.connect();
 
 		while (true) {
 			// By default, we concatenate 200 inserts into a single INSERT statement.
@@ -469,20 +473,32 @@ class MySqlIngester extends IngesterBase implements Ingester {
 			String colVals = new String(
 					Joiner.on(", ").join(stringList).getBytes(),
 					Charsets.UTF_8);
-			String exStr = String.format(exStrTemplate, commandString,
-					ignoreString, tableName, colNamesStr, colVals);
-			// unquote NULLs
-			exStr = exStr.replace("'NULL'", "NULL");
-			exStr = exStr.replace("'null'", "NULL");
+			final String exStr = String
+					.format(exStrTemplate, commandString, ignoreString,
+							tableName, colNamesStr, colVals)
+					// unquote NULLs
+					.replace("'NULL'", "NULL").replace("'null'", "NULL");
 
-			try {
-				conn = executeQuery(conn, exStr, 2);
-			} catch (SQLException e) {
-				LOGGER.error(
-						String.format("Error occured executing: %s", exStr), e);
-				// } catch (SQLIntegrityConstraintViolationException e) {
-				// This is likely a primary key constraint violation; should only be hit if skipKeyViolators is False
-			}
+			runWithFibonacciBackoff(new Runnable() {
+
+				@Override
+				public void run () {
+					try {
+						conn[0] = executeQuery(conn[0], exStr, 2);
+					} catch (SQLException e) {
+						LOGGER.error(String.format(
+								"Error occured executing: %s", exStr), e);
+						// } catch (SQLIntegrityConstraintViolationException e) {
+						// This is likely a primary key constraint violation; should only be hit if skipKeyViolators is False
+					} catch (InstantiationException | IllegalAccessException
+							| ClassNotFoundException e) {
+						throw new RuntimeException(String.format(
+								"Exception executing %s from %s.populateTable",
+								exStr, MySqlIngester.this.getClass().getName()),
+								e);
+					}
+				}
+			}, LOGGER);
 
 			this.lastRecordIngested = this.parser.getLatestRecordNum();
 			long recCheck = checkProgress(5000, 120 * 1000);
@@ -494,7 +510,7 @@ class MySqlIngester extends IngesterBase implements Ingester {
 			}
 		}
 
-		conn.disconnect();
+		conn[0].disconnect();
 	}
 
 	/**

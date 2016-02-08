@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.spacehopperstudios.epf.parse.V3Parser;
 
 /**
@@ -37,6 +39,9 @@ public abstract class IngesterBase implements Ingester {
 
 	protected long lastRecordCheck = 0;
 	protected Date lastTimeCheck;
+
+	protected static final int[] FIBONACCI = new int[] { 1, 1, 2, 3, 5, 8, 13,
+			21, 34, 55, 89, 144, 233, 377, 610, 987 };
 
 	public void updateStatusDict () {
 		this.statusDict.put("fileName", this.fileName);
@@ -123,5 +128,35 @@ public abstract class IngesterBase implements Ingester {
 
 		this.lastRecordCheck = 0;
 		this.lastTimeCheck = new Date();
+	}
+
+	/**
+	 * Method runs runnable and retries with back-off in case of an exception. The runnable is run on the same thread.
+	 * @param runnable
+	 * @param logger
+	 * @throws InterruptedException
+	 */
+	protected void runWithFibonacciBackoff (Runnable runnable, Logger logger)
+			throws InterruptedException {
+		int attempt = 0;
+		while (true) {
+			try {
+				runnable.run();
+				break;
+			} catch (Exception e) {
+				logger.error("Error occured while ingesting.", e);
+
+				if (attempt < FIBONACCI.length) {
+					long duration = FIBONACCI[attempt] * 1000;
+					attempt++;
+					logger.info(String.format(
+							"Going to retry (%d of %d times), after waiting for %d millis",
+							attempt, FIBONACCI.length, duration));
+					Thread.sleep(duration);
+				} else {
+					throw e;
+				}
+			}
+		}
 	}
 }
