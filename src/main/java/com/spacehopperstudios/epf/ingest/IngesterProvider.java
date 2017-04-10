@@ -17,6 +17,8 @@ public class IngesterProvider {
 			return new MySqlIngester();
 		} else if ("DataStore".equalsIgnoreCase(name)) {
 			return new DataStoreIngester();
+		} else if ("Objectify".equalsIgnoreCase(name)) {
+			return new ObjectifyClassCreatorIngestor();
 		}
 		
 		return null;
