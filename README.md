@@ -3,14 +3,14 @@ Java EPF Importer
 
 A version of apple's EPF importer written in Java. The original scripts can be found at http://www.apple.com/itunes/affiliates/resources/documentation/epfimporter.html#configure-epfimporter.
 
-##Current supported ingesters
+## Current supported ingesters
 
 - MySQL (original ingestor)
 - DataStore using appengine remote api
 
 There is also a fork [here](https://github.com/Cheers-Dev/JavaEPFImporter) that supports Postgres.
 
-##Usage
+## Usage
 ```bash
 java -jar epfimporter.jar [-fxrak] [-d db_host] [-u db_user] [-p db_password] [-n db_name]
     [-s record_separator] [-t field_separator] [-w regex [-w regex2 [...]]]
@@ -33,5 +33,5 @@ java -jar epfimporter.jar [-fxrak] [-d db_host] [-u db_user] [-p db_password] [-
 - __k__ or __skipkeyviolators__: Ignore inserts which would violate a primary key constraint; only applies to full imports - defaults to false
 
 
-##Contribute
+## Contribute
 Please feel free to raise issues and contribute fixes, but please note that this is a work in progress.
