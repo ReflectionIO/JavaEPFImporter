@@ -116,7 +116,7 @@ class MySqlIngester extends IngesterBase implements Ingester {
 
 		if (LOGGER.isInfoEnabled()) {
 			LOGGER.info(
-					String.format("Full ingest of %s took %d", this.tableName,
+					String.format("Full ingest of %s took %s", this.tableName,
 							TimeHelper.durationText(startTime, endTime)));
 		}
 	}
